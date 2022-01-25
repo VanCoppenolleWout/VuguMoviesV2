@@ -1,9 +1,11 @@
-<div class="o-container-sm">
+<div>
+    <comps:Header></comps:Header>
+    <div class="o-container-sm">
       <div class="o-detail-layout">
         <div class="o-layout-detail">
           <img
             class="c-movie--poster-big"
-            src="/assets/images/placeholder/movie_placeholder.jpeg"
+            src="https://firebasestorage.googleapis.com/v0/b/pizza-backend-67c13.appspot.com/o/Pizzas%2Fmovie_placeholder.jpeg?alt=media&token=e94c881a-8a95-45a5-9d6c-f716581407b3"
             alt=""
           />
           <div class="c-detail-rating">
@@ -185,8 +187,15 @@
         </div>
       </div>
     </div>
+</div>
+
 
 <script type="application/x-go">
+
+
+import (
+    "github.com/vugu-examples/taco-store/ui/comps"
+)
 
 type Detail struct {}
 
