@@ -43,6 +43,10 @@ func VuguSetup(buildEnv *vugu.BuildEnv, eventEnv vugu.EventEnv) vugu.Builder {
 		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
 			root.Body = &pages.Checkout{}
 		}))
+		router.MustAddRouteExact("/login",
+		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
+			root.Body = &pages.Login{}
+		}))
 	router.SetNotFound(vgrouter.RouteHandlerFunc(
 		func(rm *vgrouter.RouteMatch) {
 			root.Body = &pages.PageNotFound{} // A PAGE FOR THE NOT-FOUND CASE

@@ -5,7 +5,7 @@
           <p class="c-landing--subtitle">
             Open a new account and join the world of movie reviewing.
           </p>
-          <button @click='c.Navigate("/checkout", nil)' class="o-button-reset c-landing--btn">Get started</button>
+          <button @click='c.Navigate("/login", nil)' class="o-button-reset c-landing--btn">Get started</button>
         </header>
         <section>
           <div class="o-layout-detail--header" style="margin-bottom: 4rem">

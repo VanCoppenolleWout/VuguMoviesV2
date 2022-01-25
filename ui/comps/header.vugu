@@ -1,0 +1,20 @@
+<div class="o-container">
+    <div class="o-row">
+        <header class="c-header">
+            <h1 class="c-header--title">MovieCheckr</h1>
+            <button class="c-header--btn o-button-reset" @click='c.Navigate("/login", nil)'>Sign in</button>
+        </header>
+    </div>
+</div>
+
+<script type="application/x-go">
+
+import (
+    "github.com/vugu/vgrouter"
+)
+
+type Header struct {
+    vgrouter.NavigatorRef
+}
+
+</script>

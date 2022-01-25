@@ -1,9 +1,10 @@
-<div>
-    <main role="main" class="container">
-        <comps:TopNav></comps:TopNav>
-        <vg-comp expr="c.Body"/>
-    </main>
-</div>
+<body>
+        <div id="root">
+        <comps:Header></comps:Header>
+        <vg-comp expr="c.Body"></vg-comp>
+        <comps:Footer></comps:Footer>
+        </div>
+    </body>
 
 <script type="application/x-go">
 import "github.com/vugu-examples/taco-store/ui/comps"
@@ -12,3 +13,5 @@ import "github.com/vugu-examples/taco-store/ui/comps"
 type Root struct {
     Body vugu.Builder
 }
+
+</script>
