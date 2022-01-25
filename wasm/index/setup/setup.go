@@ -35,14 +35,6 @@ func VuguSetup(buildEnv *vugu.BuildEnv, eventEnv vugu.EventEnv) vugu.Builder {
 		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
 			root.Body = &pages.Index{}
 		}))
-	router.MustAddRouteExact("/cart",
-		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
-			root.Body = &pages.Cart{}
-		}))
-	router.MustAddRouteExact("/checkout",
-		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
-			root.Body = &pages.Checkout{}
-		}))
 	router.MustAddRouteExact("/movies",
 		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
 			root.Body = &pages.Movies{}
@@ -50,6 +42,10 @@ func VuguSetup(buildEnv *vugu.BuildEnv, eventEnv vugu.EventEnv) vugu.Builder {
 	router.MustAddRouteExact("/login",
 		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
 			root.Body = &pages.Login{}
+		}))
+	router.MustAddRouteExact("/register",
+		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
+			root.Body = &pages.Register{}
 		}))
 	router.SetNotFound(vgrouter.RouteHandlerFunc(
 		func(rm *vgrouter.RouteMatch) {

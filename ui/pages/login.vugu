@@ -3,7 +3,7 @@
         <section class="c-login">
             <div class="c-login-header">
                 <h1 class="c-login--title">Log in</h1>
-                <span class="c-login--text">No account yet? <span class="c-login--link">Register here</span></span>
+                <span class="c-login--text">No account yet? <span class="c-login--link" @click='c.Navigate("/register", nil)'>Register here</span></span>
             </div>
             <form action="">
                 <div class="c-input-full">
@@ -27,8 +27,6 @@ import (
 )
 
 type Login struct {
-
-    // ANYTHING THAT MUST NAVIGATE NEED ONLY EMBED THIS
     vgrouter.NavigatorRef
 }
 
