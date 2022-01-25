@@ -103,8 +103,6 @@ var indexHTML = `<!doctype html>
 <head>
 <meta charset="utf-8"/>
     <link rel="stylesheet" href="/css/main.css">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- styles -->
 </head>
 <body>
@@ -113,6 +111,7 @@ var indexHTML = `<!doctype html>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/text-encoding@0.7.0/lib/encoding.min.js"></script> <!-- MS Edge polyfill -->
 <script src="/wasm_exec.js"></script>
+<script vg-if='c.AutoReload' src="http://localhost:8324/auto-reload.js"></script>
 <!-- scripts -->
 <script>
 var wasmSupported = (typeof WebAssembly === "object");
