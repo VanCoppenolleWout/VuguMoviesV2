@@ -1,3 +1,5 @@
+<div>
+<comps:Header></comps:Header>
 <div class="o-container-sm">
       <div class="o-detail-layout">
         <header class="o-layout-detail--header">
@@ -607,11 +609,15 @@
         </section>
       </div>
     </div>
+    <comps:Footer></comps:Footer>
+</div>
+
 
 <script type="application/x-go">
 
 import (
   "github.com/vugu/vgrouter"
+  "github.com/vugu-examples/taco-store/ui/comps"
 )
 
 type Index struct {

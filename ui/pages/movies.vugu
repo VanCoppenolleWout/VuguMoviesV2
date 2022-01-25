@@ -1,4 +1,6 @@
-<div class="o-container">
+<div>
+<comps:Header></comps:Header>
+    <div class="o-container">
       <div class="o-movies-layout">
         <div class="c-movie">
           <h1 class="c-movie--title">Trending movies</h1>
@@ -150,11 +152,13 @@
         </aside>
       </div>
     </div>
+</div>
 
 <script type="application/x-go">
 
 import (
     "github.com/vugu/vgrouter"
+    "github.com/vugu-examples/taco-store/ui/comps"
 )
 
 type Movies struct {
