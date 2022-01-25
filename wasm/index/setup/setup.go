@@ -43,7 +43,11 @@ func VuguSetup(buildEnv *vugu.BuildEnv, eventEnv vugu.EventEnv) vugu.Builder {
 		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
 			root.Body = &pages.Checkout{}
 		}))
-		router.MustAddRouteExact("/login",
+	router.MustAddRouteExact("/movies",
+		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
+			root.Body = &pages.Movies{}
+		}))
+	router.MustAddRouteExact("/login",
 		vgrouter.RouteHandlerFunc(func(rm *vgrouter.RouteMatch) {
 			root.Body = &pages.Login{}
 		}))
