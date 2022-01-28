@@ -18,3 +18,21 @@ type Address struct {
 	Country    string `json:"country"`
 	SaveInfo   bool   `json:"save_info"`
 }
+
+type Movie struct {
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Genre       string `json:"genre"`
+	ImgURL      string `json:"imgURL"`
+	Description string `json:"description"`
+	ReleaseDate int    `json:"releaseDate"`
+	Length      string `json:"length"`
+	Likes       int    `json:"likes"`
+	Comments    int    `json:"comments"`
+}
+
+type User struct {
+	ID       string `json:"id"`
+	Username string `json:"name"`
+	Password string `json:"password"`
+}
