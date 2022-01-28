@@ -1138,8 +1138,8 @@ var _ js.Value
 
 type Login struct {
 	vgrouter.NavigatorRef
-	UserInfo	memstore.User	`vugu:"data"`
-	Errormessage	bool
+	UserInfo			memstore.User	`vugu:"data"`
+	errorUser, errorPassword	bool
 }
 
 func (c *Login) HandleUsername(event vugu.DOMEvent) {
@@ -1154,12 +1154,21 @@ func (c *Login) HandlePassword(event vugu.DOMEvent) {
 func (c *Login) HandleSubmit(event vugu.DOMEvent) {
 	log.Printf(c.UserInfo.Username)
 
+	if len(c.UserInfo.Username) == 0 {
+		c.errorUser = true
+	}
+
+	if len(c.UserInfo.Password) == 0 {
+		c.errorPassword = true
+	}
+
 	if len(c.UserInfo.Username) != 0 && len(c.UserInfo.Password) != 0 {
+		c.errorUser = false
+		c.errorPassword = false
 		log.Printf("submit")
 		// backend logic
-		c.Errormessage = false
-
 	}
+
 }
 
 func (c *Login) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
@@ -1226,96 +1235,95 @@ func (c *Login) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
 					vgparent.AppendChild(vgn)
 				}
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 				vgparent.AppendChild(vgn)
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "form", Attr: []vugu.VGAttribute(nil)}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input-full"}}}
 				vgparent.AppendChild(vgn)
 				{
 					vgparent := vgn
 					_ = vgparent
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
 					vgparent.AppendChild(vgn)
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input-full"}}}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "label", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-label"}, vugu.VGAttribute{Namespace: "", Key: "for", Val: ""}}}
 					vgparent.AppendChild(vgn)
-					{
-						vgparent := vgn
-						_ = vgparent
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
-						vgparent.AppendChild(vgn)
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "label", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-label"}, vugu.VGAttribute{Namespace: "", Key: "for", Val: ""}}}
-						vgparent.AppendChild(vgn)
-						vgn.SetInnerHTML(vugu.HTML("username"))
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
-						vgparent.AppendChild(vgn)
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "input", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input"}, vugu.VGAttribute{Namespace: "", Key: "type", Val: "text"}, vugu.VGAttribute{Namespace: "", Key: "name", Val: ""}, vugu.VGAttribute{Namespace: "", Key: "id", Val: "username"}, vugu.VGAttribute{Namespace: "", Key: "placeholder", Val: "JohnDoe"}}}
-						vgparent.AppendChild(vgn)
-						vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
-							EventType:	"change",
-							Func:		func(event vugu.DOMEvent) { c.HandleUsername(event) },
-							// TODO: implement capture, etc. mostly need to decide syntax
-						})
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
-						vgparent.AppendChild(vgn)
-					}
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+					vgn.SetInnerHTML(vugu.HTML("username"))
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
 					vgparent.AppendChild(vgn)
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute(nil)}
-					vgparent.AppendChild(vgn)
-					{
-						vgparent := vgn
-						_ = vgparent
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
-						vgparent.AppendChild(vgn)
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "label", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-label"}, vugu.VGAttribute{Namespace: "", Key: "for", Val: ""}}}
-						vgparent.AppendChild(vgn)
-						vgn.SetInnerHTML(vugu.HTML("password"))
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
-						vgparent.AppendChild(vgn)
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "input", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input"}, vugu.VGAttribute{Namespace: "", Key: "type", Val: "password"}, vugu.VGAttribute{Namespace: "", Key: "name", Val: ""}, vugu.VGAttribute{Namespace: "", Key: "id", Val: "password"}, vugu.VGAttribute{Namespace: "", Key: "placeholder", Val: "************"}}}
-						vgparent.AppendChild(vgn)
-						vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
-							EventType:	"change",
-							Func:		func(event vugu.DOMEvent) { c.HandlePassword(event) },
-							// TODO: implement capture, etc. mostly need to decide syntax
-						})
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
-						vgparent.AppendChild(vgn)
-					}
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
-					vgparent.AppendChild(vgn)
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-button-reset c-login--btn"}}}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "input", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input"}, vugu.VGAttribute{Namespace: "", Key: "type", Val: "text"}, vugu.VGAttribute{Namespace: "", Key: "name", Val: ""}, vugu.VGAttribute{Namespace: "", Key: "id", Val: "username"}, vugu.VGAttribute{Namespace: "", Key: "placeholder", Val: "JohnDoe"}}}
 					vgparent.AppendChild(vgn)
 					vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
-						EventType:	"click",
-						Func:		func(event vugu.DOMEvent) { c.HandleSubmit(event) },
+						EventType:	"change",
+						Func:		func(event vugu.DOMEvent) { c.HandleUsername(event) },
 						// TODO: implement capture, etc. mostly need to decide syntax
 					})
-					{
-						vgparent := vgn
-						_ = vgparent
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "Log in"}
-						vgparent.AppendChild(vgn)
-					}
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
 					vgparent.AppendChild(vgn)
-					if c.Errormessage {
-						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute(nil)}
+					if c.errorUser {
+						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-errormsg"}}}
 						vgparent.AppendChild(vgn)
 						{
 							vgparent := vgn
 							_ = vgparent
-							vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "errore"}
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "Please fill in this field."}
 							vgparent.AppendChild(vgn)
 						}
 					}
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 				}
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 				vgparent.AppendChild(vgn)
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "form", Attr: []vugu.VGAttribute(nil)}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute(nil)}
 				vgparent.AppendChild(vgn)
-				vgn.SetInnerHTML(vugu.HTML("\n        "))
+				{
+					vgparent := vgn
+					_ = vgparent
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgparent.AppendChild(vgn)
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "label", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-label"}, vugu.VGAttribute{Namespace: "", Key: "for", Val: ""}}}
+					vgparent.AppendChild(vgn)
+					vgn.SetInnerHTML(vugu.HTML("password"))
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgparent.AppendChild(vgn)
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "input", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input"}, vugu.VGAttribute{Namespace: "", Key: "type", Val: "password"}, vugu.VGAttribute{Namespace: "", Key: "name", Val: ""}, vugu.VGAttribute{Namespace: "", Key: "id", Val: "password"}, vugu.VGAttribute{Namespace: "", Key: "placeholder", Val: "************"}}}
+					vgparent.AppendChild(vgn)
+					vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
+						EventType:	"change",
+						Func:		func(event vugu.DOMEvent) { c.HandlePassword(event) },
+						// TODO: implement capture, etc. mostly need to decide syntax
+					})
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgparent.AppendChild(vgn)
+					if c.errorPassword {
+						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-errormsg"}}}
+						vgparent.AppendChild(vgn)
+						{
+							vgparent := vgn
+							_ = vgparent
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "Please fill in this field."}
+							vgparent.AppendChild(vgn)
+						}
+					}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+					vgparent.AppendChild(vgn)
+				}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+				vgparent.AppendChild(vgn)
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-button-reset c-login--btn"}}}
+				vgparent.AppendChild(vgn)
+				vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
+					EventType:	"click",
+					Func:		func(event vugu.DOMEvent) { c.HandleSubmit(event) },
+					// TODO: implement capture, etc. mostly need to decide syntax
+				})
+				{
+					vgparent := vgn
+					_ = vgparent
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "Log in"}
+					vgparent.AppendChild(vgn)
+				}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n        "}
+				vgparent.AppendChild(vgn)
 			}
 			vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n    "}
 			vgparent.AppendChild(vgn)

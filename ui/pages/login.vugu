@@ -5,19 +5,17 @@
                 <h1 class="c-login--title">Log in</h1>
                 <span class="c-login--text">No account yet? <span class="c-login--link" @click='c.Navigate("/register", nil)'>Register here</span></span>
             </div>
-            <form>
                 <div class="c-input-full">
                     <label class="c-label" for="">username</label>
                     <input @change='c.HandleUsername(event)' class="c-input" type="text" name="" id="username" placeholder="JohnDoe">
+                    <div vg-if='c.errorUser' class="c-errormsg">Please fill in this field.</div>
                 </div>
                 <div>
                     <label class="c-label" for="">password</label>
                     <input @change='c.HandlePassword(event)' class="c-input" type="password" name="" id="password" placeholder="************">
+                    <div vg-if='c.errorPassword' class="c-errormsg">Please fill in this field.</div>
                 </div>
                 <button @click='c.HandleSubmit(event)' class="o-button-reset c-login--btn">Log in</button>
-                <div vg-if='c.Errormessage'>errore</div>
-            </form>
-            <form>
         </section>
     </div>
 </div>
@@ -34,7 +32,7 @@ import (
 type Login struct {
     vgrouter.NavigatorRef
     UserInfo	memstore.User	`vugu:"data"`
-    Errormessage bool
+    errorUser, errorPassword bool
 }
 
 func (c *Login) HandleUsername(event vugu.DOMEvent) {
@@ -49,13 +47,21 @@ func (c *Login) HandlePassword(event vugu.DOMEvent) {
 func (c *Login) HandleSubmit(event vugu.DOMEvent) {
     log.Printf(c.UserInfo.Username)
     
+    if len(c.UserInfo.Username) == 0 {
+        c.errorUser = true
+     }
 
+    if len(c.UserInfo.Password) == 0 {
+        c.errorPassword = true
+    }
+    
     if len(c.UserInfo.Username) != 0 && len(c.UserInfo.Password) != 0 { 
+        c.errorUser = false
+        c.errorPassword = false
         log.Printf("submit")
         // backend logic
-        c.Errormessage = false
-        
     }
+    
 }
 
 

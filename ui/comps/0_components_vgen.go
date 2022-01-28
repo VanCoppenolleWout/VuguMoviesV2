@@ -299,7 +299,17 @@ func (c *Header) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 				vgparent.AppendChild(vgn)
 				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "h1", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-header--title"}}}
 				vgparent.AppendChild(vgn)
-				vgn.SetInnerHTML(vugu.HTML("MovieCheckr"))
+				vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
+					EventType:	"click",
+					Func:		func(event vugu.DOMEvent) { c.Navigate("/", nil) },
+					// TODO: implement capture, etc. mostly need to decide syntax
+				})
+				{
+					vgparent := vgn
+					_ = vgparent
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "MovieCheckr"}
+					vgparent.AppendChild(vgn)
+				}
 				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
 				vgparent.AppendChild(vgn)
 				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-header--btn o-button-reset"}}}

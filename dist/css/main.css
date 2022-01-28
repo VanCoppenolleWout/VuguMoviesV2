@@ -510,7 +510,14 @@ input::placeholder {
 }
 
 .c-input-full {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.c-errormsg {
+  position: absolute;
+  padding-top: 0.125rem;
+  font-size: 0.75rem;
+  color: red
 }
 
 .c-label {
