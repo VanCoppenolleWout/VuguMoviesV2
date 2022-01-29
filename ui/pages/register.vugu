@@ -9,35 +9,23 @@
                 <h1 class="c-register--title">Create an account</h1>
                 <div style="width: 24px;"></div>
             </div>
-            <form action="">
-                <div>
-                    <div class="o-layout-inputs">
-                        <div class="c-input-full">
-                            <label class="c-label" for="">Name</label>
-                            <input class="c-input" type="email" name="" id="" placeholder="John">
-                        </div>
-                        <div class="c-input-full">
-                            <label class="c-label" for="">Last Name</label>
-                            <input class="c-input" type="password" name="" id="" placeholder="Doe">
-                        </div>
-                    </div>
-                    <div class="c-input-full">
-                        <label class="c-label" for="">Nickname</label>
-                        <input class="c-input" type="password" name="" id="" placeholder="Nickname">
-                    </div>
-                    <div class="o-layout-inputs">
-                        <div class="c-input-full">
-                            <label class="c-label" for="">Email</label>
-                            <input class="c-input" type="email" name="" id="" placeholder="example@mail.com">
-                        </div>
-                        <div class="c-input-full">
-                            <label class="c-label" for="">Password</label>
-                            <input class="c-input" type="password" name="" id="" placeholder="************">
-                        </div>
-                    </div>
+            <div class="c-input-full">
+                    <label class="c-label" for="">username</label>
+                    <input @change='c.HandleUsername(event)' class="c-input" type="text" name="" id="username" placeholder="JohnDoe">
+                    <div vg-if='c.errorUser' class="c-errormsg">Please fill in this field.</div>
                 </div>
-                <button type="submit" class="o-button-reset c-login--btn">Register</button>
-            </form>
+                <div>
+                    <label class="c-label" for="">password</label>
+                    <input @change='c.HandlePassword(event)' class="c-input" type="password" name="" id="password" placeholder="************">
+                    <div vg-if='c.errorPassword' class="c-errormsg">Please fill in this field.</div>
+                </div>
+                <div>
+                    <label class="c-label" for="">repeat password</label>
+                    <input @change='c.HandleRepeat(event)' class="c-input" type="password" name="" id="repeatpassword" placeholder="************">
+                    <div vg-if='c.errorRepeat' class="c-errormsg">Please fill in this field.</div>
+                    <div vg-if='c.errorMatch' class="c-errormsg">Passwords don't match</div>
+                </div>
+                <button @click='c.HandleSubmit(event)' class="o-button-reset c-login--btn">Register</button>
         </section>
     </div>
 </div>
@@ -46,10 +34,55 @@
 
 import (
     "github.com/vugu/vgrouter"
+    "github.com/vugu-examples/taco-store/internal/memstore"
+    //js "github.com/vugu/vugu/js"
+    "log"
 )
 
 type Register struct {
     vgrouter.NavigatorRef
+    UserInfo	memstore.User	`vugu:"data"`
+    errorUser, errorPassword, errorRepeat, errorMatch bool
+    repeatPassword string
+}
+
+func (c *Register) HandleUsername(event vugu.DOMEvent) {
+    c.UserInfo.Username = event.PropString("target", "value")
+}
+
+func (c *Register) HandlePassword(event vugu.DOMEvent) {
+    c.UserInfo.Password = event.PropString("target", "value")
+}
+
+func (c *Register) HandleRepeat(event vugu.DOMEvent) {
+    c.repeatPassword = event.PropString("target", "value")
+}
+
+func (c *Register) HandleSubmit(event vugu.DOMEvent) {    
+    if len(c.UserInfo.Username) == 0 {
+        c.errorUser = true
+     }
+
+    if len(c.UserInfo.Password) == 0 {
+        c.errorPassword = true
+    }
+
+    if len(c.UserInfo.Password) == 0 {
+        c.errorRepeat = true
+    }
+
+    if c.UserInfo.Password != c.repeatPassword {
+        c.errorMatch = true
+        c.errorRepeat = false
+    }
+    
+    if len(c.UserInfo.Username) != 0 && len(c.UserInfo.Password) != 0 { 
+        if c.UserInfo.Password == c.repeatPassword {
+            c.errorUser, c.errorPassword, c.errorRepeat, c.errorMatch = false, false, false, false
+            log.Printf("submit")
+            // backend logic
+        }        
+    }
 }
 
 </script>

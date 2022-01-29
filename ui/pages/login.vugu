@@ -64,5 +64,4 @@ func (c *Login) HandleSubmit(event vugu.DOMEvent) {
     
 }
 
-
 </script>

@@ -6,6 +6,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/machinebox/graphql v0.2.2
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect
 	github.com/vugu/vgrouter v0.0.0-20200725205318-eeb478c42e5d
 	github.com/vugu/vjson v0.0.0-20200505061711-f9cbed27d3d9
 	github.com/vugu/vugu v0.3.4

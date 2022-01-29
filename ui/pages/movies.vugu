@@ -5,11 +5,12 @@
         <div class="c-movie">
           <h1 class="c-movie--title">Trending movies</h1>
           <section class="o-movie-layout">
-            <div vg-for='i := 0; i < 8; i++' >
+            <div vg-for='_, item := range c.MovieList'>
                 <img
                     class="c-movie--poster"
-                    src="https://firebasestorage.googleapis.com/v0/b/pizza-backend-67c13.appspot.com/o/Pizzas%2Fmovie_placeholder.jpeg?alt=media&token=e94c881a-8a95-45a5-9d6c-f716581407b3"
+                    :src="item.Genre"
                     alt=""
+                    @click='c.Navigate("/details", nil)'
                 />
                 <div class="o-layout-likes">
                     <div class="o-layout-likes-indv">
@@ -29,7 +30,7 @@
                         d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
                         ></path>
                     </svg>
-                    <p class="c-movie--like">43</p>
+                    <p class="c-movie--like" vg-content='item.Likes'></p>
                 </div>
                 <div class="o-layout-likes-indv">
                     <svg
@@ -48,7 +49,7 @@
                         d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
                         ></path>
                     </svg>
-                    <p class="c-movie--comment">12</p>
+                    <p class="c-movie--comment" vg-content='item.Comments'></p>
                 </div>
               </div>
             </div>
@@ -160,7 +161,9 @@ import (
     "github.com/vugu/vgrouter"
     "github.com/vugu-examples/taco-store/ui/comps"
     "github.com/vugu-examples/taco-store/ui/state"
-    "github.com/machinebox/graphql"
+    "github.com/vugu-examples/taco-store/internal/memstore"
+    "github.com/shurcooL/graphql"
+    //"github.com/machinebox/graphql"
     "fmt"
     "context"
 )
@@ -169,37 +172,78 @@ type Movies struct {
     vgrouter.NavigatorRef
     
     Items string `vugu:"data"`
+    MovieList []struct {
+      ID graphql.String `graphql:"id"`
+      Title graphql.String `graphql:"title"`
+      Genre graphql.String `graphql:"genre"`
+      ImgUrl graphql.String `graphql:"imgUrl"`
+      Description graphql.String `graphql:"description"`
+      ReleaseDate graphql.Int `graphql:"releaseDate"`
+      Length graphql.String `graphql:"length"`
+      Likes graphql.Int `graphql:"likes"`
+      Comments graphql.Int `graphql:"comments"`
+    }
+}
+
+var q_movies struct {
+	Movies []struct {
+		ID graphql.String `graphql:"id"`
+		Title graphql.String `graphql:"title"`
+		Genre graphql.String `graphql:"genre"`
+		ImgUrl graphql.String `graphql:"imgUrl"`
+		Description graphql.String `graphql:"description"`
+		ReleaseDate graphql.Int `graphql:"releaseDate"`
+		Length graphql.String `graphql:"length"`
+		Likes graphql.Int `graphql:"likes"`
+		Comments graphql.Int `graphql:"comments"`
+	}
 }
 
 func (c *Movies) Init(ctx vugu.InitCtx) {
     go func() {
-      graphqlClient := graphql.NewClient("http://localhost:8080/query")
-	    graphqlRequest := graphql.NewRequest(`
-		    {
-            movies {
-                id,
-                title,
-                genre,
-                imgURL,
-                description,
-                releaseDate,
-                length,
-                likes,
-                comments,
-            }
-  		  }
-	    `)
+    client := graphql.NewClient("http://localhost:8080/query", nil)
 
-    var graphqlResponse interface{}
-    err := graphqlClient.Run(context.Background(), graphqlRequest, &graphqlResponse)
-      if err != nil {
-        panic(err)
-      }
-      //fmt.Println(graphqlResponse)
-    //var items []string
-    data, _ := json.Marshal(graphqlResponse)
-    fmt.Println(string(data))
-    c.Items = fmt.Sprint(data)
+    err := client.Query(context.Background(), &q_movies, nil)
+    if err != nil {
+      fmt.Println(err)
+    }
+    fmt.Println(q_movies.Movies[2].Title)
+
+    ctx.EventEnv().Lock()
+
+    c.MovieList = q_movies.Movies
+
+    ctx.EventEnv().UnlockRender()
+
+    log.Println(c.MovieList, "movie list init")
+    
+    //   graphqlClient := graphql.NewClient("http://localhost:8080/query")
+	  //   graphqlRequest := graphql.NewRequest(`
+		//     {
+    //         movies {
+    //             id,
+    //             title,
+    //             genre,
+    //             imgURL,
+    //             description,
+    //             releaseDate,
+    //             length,
+    //             likes,
+    //             comments,
+    //         }
+  	// 	  }
+	  //   `)
+
+    // var graphqlResponse interface{}
+    // err := graphqlClient.Run(context.Background(), graphqlRequest, &graphqlResponse)
+    //   if err != nil {
+    //     panic(err)
+    //   }
+    //   //fmt.Println(graphqlResponse)
+    // //var items []string
+    // data, _ := json.Marshal(graphqlResponse)
+    // fmt.Println(string(data))
+    // c.Items = fmt.Sprint(data)
     }()
 }
 
