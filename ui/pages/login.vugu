@@ -26,9 +26,12 @@ import (
     "github.com/vugu/vgrouter"
     "github.com/vugu-examples/taco-store/internal/memstore"
     //js "github.com/vugu/vugu/js"
-    "github.com/shurcooL/graphql"
     "log"
 )
+
+var q_login struct {
+    Login interface{}  `graphql:"login(input: {username: $username, password: $password})"`
+}
 
 type Login struct {
     vgrouter.NavigatorRef
@@ -61,25 +64,22 @@ func (c *Login) HandleSubmit(event vugu.DOMEvent) {
         c.errorPassword = false
         log.Printf("submit")
         // backend logic
-        
-        var q_login struct {
-            Login interface{}  `graphql:"login(input: {username: $username, password: $password})"`
-        }
-        
-        client := graphql.NewClient("http://localhost:8080/query", nil)
 
-        variables := map[string]interface{}{
-            "username": graphql.String(c.UserInfo.Username),
-            "password": graphql.String(c.UserInfo.Password),
-        }
+        go func () {
+            client := graphql.NewClient("http://localhost:8080/query", nil)
 
-        err := client.Mutate(context.Background(), &q_login, variables)
-        if err != nil {
-            fmt.Println(err)
-        }
-        fmt.Println(q_login.Login)
+            variables := map[string]interface{}{
+                "username": graphql.String(c.UserInfo.Username),
+                "password": graphql.String(c.UserInfo.Password),
+            }
+
+            err := client.Mutate(context.Background(), &q_login, variables)
+            if err != nil {
+                fmt.Println(err)
+            }
+            fmt.Println(q_login.Login)
+        }()
     }
-    
 }
 
 </script>
