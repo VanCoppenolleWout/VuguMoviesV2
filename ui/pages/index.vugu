@@ -624,5 +624,8 @@ type Index struct {
   vgrouter.NavigatorRef
 }
 
+func (c *Index) Init(ctx vugu.InitCtx) string {
+	return js.Global().Get("localStorage").Call("getItem", "token").String()
+}
 
 </script>

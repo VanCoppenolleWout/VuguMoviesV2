@@ -216,34 +216,6 @@ func (c *Movies) Init(ctx vugu.InitCtx) {
     ctx.EventEnv().UnlockRender()
 
     log.Println(c.MovieList, "movie list init")
-    
-    //   graphqlClient := graphql.NewClient("http://localhost:8080/query")
-	  //   graphqlRequest := graphql.NewRequest(`
-		//     {
-    //         movies {
-    //             id,
-    //             title,
-    //             genre,
-    //             imgURL,
-    //             description,
-    //             releaseDate,
-    //             length,
-    //             likes,
-    //             comments,
-    //         }
-  	// 	  }
-	  //   `)
-
-    // var graphqlResponse interface{}
-    // err := graphqlClient.Run(context.Background(), graphqlRequest, &graphqlResponse)
-    //   if err != nil {
-    //     panic(err)
-    //   }
-    //   //fmt.Println(graphqlResponse)
-    // //var items []string
-    // data, _ := json.Marshal(graphqlResponse)
-    // fmt.Println(string(data))
-    // c.Items = fmt.Sprint(data)
     }()
 }
 

@@ -25,7 +25,7 @@
 import (
     "github.com/vugu/vgrouter"
     "github.com/vugu-examples/taco-store/internal/memstore"
-    //js "github.com/vugu/vugu/js"
+    js "github.com/vugu/vugu/js"
     "log"
 )
 
@@ -49,6 +49,7 @@ func (c *Login) HandlePassword(event vugu.DOMEvent) {
 }
 
 func (c *Login) HandleSubmit(event vugu.DOMEvent) {
+    ee := event.EventEnv()
     log.Printf(c.UserInfo.Username)
     
     if len(c.UserInfo.Username) == 0 {
@@ -77,7 +78,21 @@ func (c *Login) HandleSubmit(event vugu.DOMEvent) {
             if err != nil {
                 fmt.Println(err)
             }
-            fmt.Println(q_login.Login)
+            fmt.Println(q_login.Login, "token")
+
+            if fmt.Sprintf("%v", q_login.Login) != "<nil>" {
+                ee.Lock()
+                fmt.Println("token available")
+                js.Global().Get("localStorage").Call("setItem", "token", q_login.Login)
+                c.Navigate("/movies", nil)
+                ee.UnlockRender()
+            }
+
+            if fmt.Sprintf("%v", q_login.Login) == "<nil>" {
+                fmt.Println("token not available")
+                //js.Global().Get("localStorage").Call("setItem", "token", q_login.Login)
+            }
+
         }()
     }
 }
