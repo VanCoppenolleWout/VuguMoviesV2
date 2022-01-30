@@ -2,7 +2,8 @@
     <div class="o-row">
         <header class="c-header">
             <h1 class="c-header--title" @click='c.Navigate("/", nil)'>MovieCheckr</h1>
-            <button class="c-header--btn o-button-reset" @click='c.Navigate("/login", nil)'>Sign in</button>
+            <button vg-if='!c.signedIn' class="c-header--btn o-button-reset" @click='c.Navigate("/login", nil)'>Sign in</button>
+            <button vg-if='c.signedIn' class="c-header--btn o-button-reset" @click='c.handleSignOut(event)'>Sign out</button>
         </header>
     </div>
 </div>
@@ -11,10 +12,35 @@
 
 import (
     "github.com/vugu/vgrouter"
+    "log"
 )
 
 type Header struct {
     vgrouter.NavigatorRef
+    signedIn bool
+    token string
+}
+
+func (c *Header) Init(ctx vugu.InitCtx) {
+	c.token = js.Global().Get("localStorage").Call("getItem", "token").String()
+    log.Println(c.token)
+    if c.token != "<null>" {
+        c.signedIn = true
+    }
+
+    if c.token == "<null>" {
+        c.signedIn = false
+    }
+}
+
+func (c *Header) handleSignOut(event vugu.DOMEvent) {
+    ee := event.EventEnv()
+    go func() {
+        ee.Lock()
+        c.token = js.Global().Get("localStorage").Call("removeItem", "token").String()
+        c.Navigate("/", nil)
+        ee.UnlockRender()
+    }()
 }
 
 </script>

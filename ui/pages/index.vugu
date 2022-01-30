@@ -618,14 +618,16 @@
 import (
   "github.com/vugu/vgrouter"
   "github.com/vugu-examples/taco-store/ui/comps"
+  "log"
 )
 
 type Index struct {
   vgrouter.NavigatorRef
 }
 
-func (c *Index) Init(ctx vugu.InitCtx) string {
-	return js.Global().Get("localStorage").Call("getItem", "token").String()
+func (c *Index) Init(ctx vugu.InitCtx) {
+	token := js.Global().Get("localStorage").Call("getItem", "token").String()
+  log.Println(token)
 }
 
 </script>

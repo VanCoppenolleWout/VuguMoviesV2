@@ -1021,8 +1021,9 @@ type Index struct {
 	vgrouter.NavigatorRef
 }
 
-func (c *Index) Init(ctx vugu.InitCtx) string {
-	return js.Global().Get("localStorage").Call("getItem", "token").String()
+func (c *Index) Init(ctx vugu.InitCtx) {
+	token := js.Global().Get("localStorage").Call("getItem", "token").String()
+	log.Println(token)
 }
 
 func (c *Index) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {

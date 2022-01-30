@@ -12,6 +12,7 @@ import js "github.com/vugu/vugu/js"
 
 import (
 	"github.com/vugu/vgrouter"
+	"log"
 )
 
 type Footer struct {
@@ -267,6 +268,32 @@ var _ js.Value
 
 type Header struct {
 	vgrouter.NavigatorRef
+	signedIn	bool
+	token		string
+}
+
+func (c *Header) Init(ctx vugu.InitCtx) {
+	c.token = js.Global().Get("localStorage").Call("getItem", "token").String()
+	log.Println(c.token)
+	if c.token != "<null>" {
+		c.signedIn = true
+	}
+
+	if c.token == "<null>" {
+		c.signedIn = false
+	}
+}
+
+func (c *Header) handleSignOut(event vugu.DOMEvent) {
+	ee := event.EventEnv()
+	log.Println("sign out")
+	go func() {
+		ee.Lock()
+		c.token = js.Global().Get("localStorage").Call("removeItem", "token").String()
+		c.Navigate("/", nil)
+		ee.UnlockRender()
+	}()
+
 }
 
 func (c *Header) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
@@ -312,18 +339,37 @@ func (c *Header) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 				}
 				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
 				vgparent.AppendChild(vgn)
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-header--btn o-button-reset"}}}
-				vgparent.AppendChild(vgn)
-				vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
-					EventType:	"click",
-					Func:		func(event vugu.DOMEvent) { c.Navigate("/login", nil) },
-					// TODO: implement capture, etc. mostly need to decide syntax
-				})
-				{
-					vgparent := vgn
-					_ = vgparent
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "Sign in"}
+				if !c.signedIn {
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-header--btn o-button-reset"}}}
 					vgparent.AppendChild(vgn)
+					vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
+						EventType:	"click",
+						Func:		func(event vugu.DOMEvent) { c.Navigate("/login", nil) },
+						// TODO: implement capture, etc. mostly need to decide syntax
+					})
+					{
+						vgparent := vgn
+						_ = vgparent
+						vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "Sign in"}
+						vgparent.AppendChild(vgn)
+					}
+				}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+				vgparent.AppendChild(vgn)
+				if c.signedIn {
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-header--btn o-button-reset"}}}
+					vgparent.AppendChild(vgn)
+					vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
+						EventType:	"click",
+						Func:		func(event vugu.DOMEvent) { c.handleSignOut(event) },
+						// TODO: implement capture, etc. mostly need to decide syntax
+					})
+					{
+						vgparent := vgn
+						_ = vgparent
+						vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "Sign out"}
+						vgparent.AppendChild(vgn)
+					}
 				}
 				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n        "}
 				vgparent.AppendChild(vgn)
