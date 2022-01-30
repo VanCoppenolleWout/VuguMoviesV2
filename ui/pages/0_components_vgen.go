@@ -1382,7 +1382,20 @@ var _ js.Value
 type Movies struct {
 	vgrouter.NavigatorRef
 
-	Items		string	`vugu:"data"`
+	Items	string	`vugu:"data"`
+
+	MovieObject	struct {
+		ID		graphql.String	`graphql:"id"`
+		Title		graphql.String	`graphql:"title"`
+		Genre		graphql.String	`graphql:"genre"`
+		ImgUrl		graphql.String	`graphql:"imgUrl"`
+		Description	graphql.String	`graphql:"description"`
+		ReleaseDate	graphql.Int	`graphql:"releaseDate"`
+		Length		graphql.String	`graphql:"length"`
+		Likes		graphql.Int	`graphql:"likes"`
+		Comments	graphql.Int	`graphql:"comments"`
+	}
+
 	MovieList	[]struct {
 		ID		graphql.String	`graphql:"id"`
 		Title		graphql.String	`graphql:"title"`
@@ -1418,15 +1431,24 @@ func (c *Movies) Init(ctx vugu.InitCtx) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(q_movies.Movies[2].Title)
 
 		ctx.EventEnv().Lock()
 
 		c.MovieList = q_movies.Movies
 
 		ctx.EventEnv().UnlockRender()
+	}()
+}
 
-		log.Println(c.MovieList, "movie list init")
+func (c *Movies) HandleMovie(event vugu.DOMEvent) {
+	ee := event.EventEnv()
+	go func() {
+		ee.Lock()
+		js.Global().Get("localStorage").Call("setItem", "movieItem", fmt.Sprintf("%#v", c.MovieObject))
+		str := js.Global().Get("localStorage").Call("getItem", "movieItem").String()
+		log.Println(str)
+		c.Navigate("/details", nil)
+		ee.UnlockRender()
 	}()
 }
 
@@ -1507,6 +1529,11 @@ func (c *Movies) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 								vgparent.AppendChild(vgn)
 								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie-img"}}}
 								vgparent.AppendChild(vgn)
+								vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
+									EventType:	"click",
+									Func:		func(event vugu.DOMEvent) { c.MovieObject = item; c.HandleMovie(event) },
+									// TODO: implement capture, etc. mostly need to decide syntax
+								})
 								{
 									vgparent := vgn
 									_ = vgparent
@@ -1515,11 +1542,6 @@ func (c *Movies) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 									vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "img", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie--poster"}, vugu.VGAttribute{Namespace: "", Key: "alt", Val: ""}}}
 									vgparent.AppendChild(vgn)
 									vgn.AddAttrInterface("src", item.Genre)
-									vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
-										EventType:	"click",
-										Func:		func(event vugu.DOMEvent) { c.Navigate("/details", nil) },
-										// TODO: implement capture, etc. mostly need to decide syntax
-									})
 									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                  "}
 									vgparent.AppendChild(vgn)
 									vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-layout-img--text"}}}

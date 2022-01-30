@@ -470,6 +470,7 @@ input::placeholder {
 
 .c-movie-img {
   position: relative;
+  cursor: pointer;
 }
 
 .o-layout-img--text {

@@ -6,12 +6,11 @@
           <h1 class="c-movie--title">Trending movies</h1>
           <section class="o-movie-layout">
             <div vg-for='_, item := range c.MovieList'>
-                <div class="c-movie-img">
+                <div class="c-movie-img" @click='c.MovieObject = item; c.HandleMovie(event)'>
                   <img
                     class="c-movie--poster"
                     :src="item.Genre"
                     alt=""
-                    @click='c.Navigate("/details", nil)'
                   />
                   <div class="o-layout-img--text">
                     <div class="o-layout-movieinfo">
@@ -175,6 +174,7 @@ import (
     "github.com/vugu-examples/taco-store/internal/memstore"
     "github.com/shurcooL/graphql"
     //"github.com/machinebox/graphql"
+    "encoding/json"
     "fmt"
     "context"
 )
@@ -183,6 +183,19 @@ type Movies struct {
     vgrouter.NavigatorRef
     
     Items string `vugu:"data"`
+
+    MovieObject struct {
+      ID graphql.String `graphql:"id"`
+      Title graphql.String `graphql:"title"`
+      Genre graphql.String `graphql:"genre"`
+      ImgUrl graphql.String `graphql:"imgUrl"`
+      Description graphql.String `graphql:"description"`
+      ReleaseDate graphql.Int `graphql:"releaseDate"`
+      Length graphql.String `graphql:"length"`
+      Likes graphql.Int `graphql:"likes"`
+      Comments graphql.Int `graphql:"comments"`
+    }
+
     MovieList []struct {
       ID graphql.String `graphql:"id"`
       Title graphql.String `graphql:"title"`
@@ -218,15 +231,24 @@ func (c *Movies) Init(ctx vugu.InitCtx) {
     if err != nil {
       fmt.Println(err)
     }
-    fmt.Println(q_movies.Movies[2].Title)
 
     ctx.EventEnv().Lock()
 
     c.MovieList = q_movies.Movies
 
     ctx.EventEnv().UnlockRender()
+    }()
+}
 
-    log.Println(c.MovieList, "movie list init")
+func (c *Movies) HandleMovie(event vugu.DOMEvent) {
+  ee := event.EventEnv()
+    go func() {
+        ee.Lock()
+        js.Global().Get("localStorage").Call("setItem", "movieItem", fmt.Sprintf("%#v", c.MovieObject))
+        str := js.Global().Get("localStorage").Call("getItem", "movieItem").String()
+        log.Println(str)
+        c.Navigate("/details", nil)
+        ee.UnlockRender()
     }()
 }
 
