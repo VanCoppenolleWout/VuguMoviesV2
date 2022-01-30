@@ -286,14 +286,12 @@ func (c *Header) Init(ctx vugu.InitCtx) {
 
 func (c *Header) handleSignOut(event vugu.DOMEvent) {
 	ee := event.EventEnv()
-	log.Println("sign out")
 	go func() {
 		ee.Lock()
 		c.token = js.Global().Get("localStorage").Call("removeItem", "token").String()
 		c.Navigate("/", nil)
 		ee.UnlockRender()
 	}()
-
 }
 
 func (c *Header) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
@@ -357,7 +355,7 @@ func (c *Header) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
 				vgparent.AppendChild(vgn)
 				if c.signedIn {
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-header--btn o-button-reset"}}}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-header--btn__out o-button-reset"}}}
 					vgparent.AppendChild(vgn)
 					vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
 						EventType:	"click",

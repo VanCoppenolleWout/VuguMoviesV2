@@ -53,11 +53,11 @@ import (
 
 var _ vugu.DOMEvent	// import fixer
 
-// Details is a Vugu component and implements the vugu.Builder interface.
-type Details struct{}
-
 // PageNotFound is a Vugu component and implements the vugu.Builder interface.
 type PageNotFound struct{}
+
+// Details is a Vugu component and implements the vugu.Builder interface.
+type Details struct{}
 
 type Cart struct {
 	vgrouter.NavigatorRef
@@ -1505,14 +1505,69 @@ func (c *Movies) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 								_ = vgparent
 								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 								vgparent.AppendChild(vgn)
-								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "img", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie--poster"}, vugu.VGAttribute{Namespace: "", Key: "alt", Val: ""}}}
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie-img"}}}
 								vgparent.AppendChild(vgn)
-								vgn.AddAttrInterface("src", item.Genre)
-								vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
-									EventType:	"click",
-									Func:		func(event vugu.DOMEvent) { c.Navigate("/details", nil) },
-									// TODO: implement capture, etc. mostly need to decide syntax
-								})
+								{
+									vgparent := vgn
+									_ = vgparent
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                  "}
+									vgparent.AppendChild(vgn)
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "img", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie--poster"}, vugu.VGAttribute{Namespace: "", Key: "alt", Val: ""}}}
+									vgparent.AppendChild(vgn)
+									vgn.AddAttrInterface("src", item.Genre)
+									vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
+										EventType:	"click",
+										Func:		func(event vugu.DOMEvent) { c.Navigate("/details", nil) },
+										// TODO: implement capture, etc. mostly need to decide syntax
+									})
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                  "}
+									vgparent.AppendChild(vgn)
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-layout-img--text"}}}
+									vgparent.AppendChild(vgn)
+									{
+										vgparent := vgn
+										_ = vgparent
+										vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+										vgparent.AppendChild(vgn)
+										vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-layout-movieinfo"}}}
+										vgparent.AppendChild(vgn)
+										{
+											vgparent := vgn
+											_ = vgparent
+											vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                      "}
+											vgparent.AppendChild(vgn)
+											vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "p", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie--title__txt"}}}
+											vgparent.AppendChild(vgn)
+											vgn.SetInnerHTML(item.Title)
+											vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                      "}
+											vgparent.AppendChild(vgn)
+											vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-layout-infomovie"}}}
+											vgparent.AppendChild(vgn)
+											{
+												vgparent := vgn
+												_ = vgparent
+												vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                        "}
+												vgparent.AppendChild(vgn)
+												vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "p", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie-hover--txt"}}}
+												vgparent.AppendChild(vgn)
+												vgn.SetInnerHTML(item.Description)
+												vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                        "}
+												vgparent.AppendChild(vgn)
+												vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "p", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie-hover--txt"}}}
+												vgparent.AppendChild(vgn)
+												vgn.SetInnerHTML(item.ReleaseDate)
+												vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                      "}
+												vgparent.AppendChild(vgn)
+											}
+											vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+											vgparent.AppendChild(vgn)
+										}
+										vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                  "}
+										vgparent.AppendChild(vgn)
+									}
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+									vgparent.AppendChild(vgn)
+								}
 								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 								vgparent.AppendChild(vgn)
 								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-layout-likes"}}}
@@ -1644,11 +1699,15 @@ var _ reflect.Type
 var _ vjson.RawMessage
 var _ js.Value
 
+var q_createuser struct {
+	CreateUser interface{} `graphql:"createUser(input: {username: $username, password: $password})"`
+}
+
 type Register struct {
 	vgrouter.NavigatorRef
-	UserInfo						memstore.User	`vugu:"data"`
-	errorUser, errorPassword, errorRepeat, errorMatch	bool
-	repeatPassword						string
+	UserInfo								memstore.User	`vugu:"data"`
+	errorUser, errorPassword, errorRepeat, errorMatch, errorRegister	bool
+	repeatPassword								string
 }
 
 func (c *Register) HandleUsername(event vugu.DOMEvent) {
@@ -1664,6 +1723,7 @@ func (c *Register) HandleRepeat(event vugu.DOMEvent) {
 }
 
 func (c *Register) HandleSubmit(event vugu.DOMEvent) {
+	ee := event.EventEnv()
 	if len(c.UserInfo.Username) == 0 {
 		c.errorUser = true
 	}
@@ -1683,9 +1743,36 @@ func (c *Register) HandleSubmit(event vugu.DOMEvent) {
 
 	if len(c.UserInfo.Username) != 0 && len(c.UserInfo.Password) != 0 {
 		if c.UserInfo.Password == c.repeatPassword {
-			c.errorUser, c.errorPassword, c.errorRepeat, c.errorMatch = false, false, false, false
+			c.errorUser, c.errorPassword, c.errorRepeat, c.errorMatch, c.errorRegister = false, false, false, false, false
 			log.Printf("submit")
 			// backend logic
+			go func() {
+				client := graphql.NewClient("http://localhost:8080/query", nil)
+
+				variables := map[string]interface{}{
+					"username":	graphql.String(c.UserInfo.Username),
+					"password":	graphql.String(c.UserInfo.Password),
+				}
+
+				err := client.Mutate(context.Background(), &q_createuser, variables)
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Println(q_createuser.CreateUser, "token")
+
+				if fmt.Sprintf("%v", q_createuser.CreateUser) != "<nil>" {
+					ee.Lock()
+					fmt.Println("token available")
+					js.Global().Get("localStorage").Call("setItem", "token", q_login.Login)
+					c.Navigate("/movies", nil)
+					ee.UnlockRender()
+				}
+
+				if fmt.Sprintf("%v", q_createuser.CreateUser) == "<nil>" {
+					fmt.Println("token not available")
+					c.errorRegister = true
+				}
+			}()
 		}
 	}
 }
@@ -1704,7 +1791,7 @@ func (c *Register) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 		_ = vgparent
 		vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n    "}
 		vgparent.AppendChild(vgn)
-		vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-container-xl"}}}
+		vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-container-lg"}}}
 		vgparent.AppendChild(vgn)
 		{
 			vgparent := vgn
@@ -1762,12 +1849,12 @@ func (c *Register) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 				{
 					vgparent := vgn
 					_ = vgparent
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "label", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-label"}, vugu.VGAttribute{Namespace: "", Key: "for", Val: ""}}}
 					vgparent.AppendChild(vgn)
 					vgn.SetInnerHTML(vugu.HTML("username"))
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "input", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input"}, vugu.VGAttribute{Namespace: "", Key: "type", Val: "text"}, vugu.VGAttribute{Namespace: "", Key: "name", Val: ""}, vugu.VGAttribute{Namespace: "", Key: "id", Val: "username"}, vugu.VGAttribute{Namespace: "", Key: "placeholder", Val: "JohnDoe"}}}
 					vgparent.AppendChild(vgn)
@@ -1776,7 +1863,7 @@ func (c *Register) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 						Func:		func(event vugu.DOMEvent) { c.HandleUsername(event) },
 						// TODO: implement capture, etc. mostly need to decide syntax
 					})
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					if c.errorUser {
 						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-errormsg"}}}
@@ -1788,22 +1875,22 @@ func (c *Register) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 							vgparent.AppendChild(vgn)
 						}
 					}
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
 					vgparent.AppendChild(vgn)
 				}
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
 				vgparent.AppendChild(vgn)
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute(nil)}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input-full"}}}
 				vgparent.AppendChild(vgn)
 				{
 					vgparent := vgn
 					_ = vgparent
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "label", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-label"}, vugu.VGAttribute{Namespace: "", Key: "for", Val: ""}}}
 					vgparent.AppendChild(vgn)
 					vgn.SetInnerHTML(vugu.HTML("password"))
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "input", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input"}, vugu.VGAttribute{Namespace: "", Key: "type", Val: "password"}, vugu.VGAttribute{Namespace: "", Key: "name", Val: ""}, vugu.VGAttribute{Namespace: "", Key: "id", Val: "password"}, vugu.VGAttribute{Namespace: "", Key: "placeholder", Val: "************"}}}
 					vgparent.AppendChild(vgn)
@@ -1812,7 +1899,7 @@ func (c *Register) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 						Func:		func(event vugu.DOMEvent) { c.HandlePassword(event) },
 						// TODO: implement capture, etc. mostly need to decide syntax
 					})
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					if c.errorPassword {
 						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-errormsg"}}}
@@ -1826,20 +1913,32 @@ func (c *Register) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 					}
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
+					if c.errorMatch {
+						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-errormsg"}}}
+						vgparent.AppendChild(vgn)
+						{
+							vgparent := vgn
+							_ = vgparent
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "Passwords don't match"}
+							vgparent.AppendChild(vgn)
+						}
+					}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+					vgparent.AppendChild(vgn)
 				}
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
 				vgparent.AppendChild(vgn)
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute(nil)}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input-full"}}}
 				vgparent.AppendChild(vgn)
 				{
 					vgparent := vgn
 					_ = vgparent
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "label", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-label"}, vugu.VGAttribute{Namespace: "", Key: "for", Val: ""}}}
 					vgparent.AppendChild(vgn)
 					vgn.SetInnerHTML(vugu.HTML("repeat password"))
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "input", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-input"}, vugu.VGAttribute{Namespace: "", Key: "type", Val: "password"}, vugu.VGAttribute{Namespace: "", Key: "name", Val: ""}, vugu.VGAttribute{Namespace: "", Key: "id", Val: "repeatpassword"}, vugu.VGAttribute{Namespace: "", Key: "placeholder", Val: "************"}}}
 					vgparent.AppendChild(vgn)
@@ -1848,7 +1947,7 @@ func (c *Register) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 						Func:		func(event vugu.DOMEvent) { c.HandleRepeat(event) },
 						// TODO: implement capture, etc. mostly need to decide syntax
 					})
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					if c.errorRepeat {
 						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-errormsg"}}}
@@ -1860,7 +1959,7 @@ func (c *Register) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 							vgparent.AppendChild(vgn)
 						}
 					}
-					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
 					if c.errorMatch {
 						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-errormsg"}}}
@@ -1874,8 +1973,20 @@ func (c *Register) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 					}
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
 					vgparent.AppendChild(vgn)
+					if c.errorRegister {
+						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-errormsg"}}}
+						vgparent.AppendChild(vgn)
+						{
+							vgparent := vgn
+							_ = vgparent
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "Failed to"}
+							vgparent.AppendChild(vgn)
+						}
+					}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+					vgparent.AppendChild(vgn)
 				}
-				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
 				vgparent.AppendChild(vgn)
 				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-button-reset c-login--btn"}}}
 				vgparent.AppendChild(vgn)

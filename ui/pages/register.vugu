@@ -1,5 +1,5 @@
 <div class="o-layout--login">
-    <div class="o-container-xl">
+    <div class="o-container-lg">
         <section class="c-login">
             <div class="c-register-header">
                 <svg @click='c.Navigate("/login", nil)' class="c-svg--back" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -10,22 +10,24 @@
                 <div style="width: 24px;"></div>
             </div>
             <div class="c-input-full">
-                    <label class="c-label" for="">username</label>
-                    <input @change='c.HandleUsername(event)' class="c-input" type="text" name="" id="username" placeholder="JohnDoe">
-                    <div vg-if='c.errorUser' class="c-errormsg">Please fill in this field.</div>
-                </div>
-                <div>
-                    <label class="c-label" for="">password</label>
-                    <input @change='c.HandlePassword(event)' class="c-input" type="password" name="" id="password" placeholder="************">
-                    <div vg-if='c.errorPassword' class="c-errormsg">Please fill in this field.</div>
-                </div>
-                <div>
-                    <label class="c-label" for="">repeat password</label>
-                    <input @change='c.HandleRepeat(event)' class="c-input" type="password" name="" id="repeatpassword" placeholder="************">
-                    <div vg-if='c.errorRepeat' class="c-errormsg">Please fill in this field.</div>
-                    <div vg-if='c.errorMatch' class="c-errormsg">Passwords don't match</div>
-                </div>
-                <button @click='c.HandleSubmit(event)' class="o-button-reset c-login--btn">Register</button>
+                <label class="c-label" for="">username</label>
+                <input @change='c.HandleUsername(event)' class="c-input" type="text" name="" id="username" placeholder="JohnDoe">
+                <div vg-if='c.errorUser' class="c-errormsg">Please fill in this field.</div>
+            </div>
+            <div class="c-input-full">
+                <label class="c-label" for="">password</label>
+                <input @change='c.HandlePassword(event)' class="c-input" type="password" name="" id="password" placeholder="************">
+                <div vg-if='c.errorPassword' class="c-errormsg">Please fill in this field.</div>
+                <div vg-if='c.errorMatch' class="c-errormsg">Passwords don't match</div>
+            </div>
+            <div class="c-input-full">
+                <label class="c-label" for="">repeat password</label>
+                <input @change='c.HandleRepeat(event)' class="c-input" type="password" name="" id="repeatpassword" placeholder="************">
+                <div vg-if='c.errorRepeat' class="c-errormsg">Please fill in this field.</div>
+                <div vg-if='c.errorMatch' class="c-errormsg">Passwords don't match</div>
+                <div vg-if='c.errorRegister' class="c-errormsg">Failed to</div>
+            </div>
+            <button @click='c.HandleSubmit(event)' class="o-button-reset c-login--btn">Register</button>
         </section>
     </div>
 </div>
@@ -39,10 +41,14 @@ import (
     "log"
 )
 
+var q_createuser struct {
+    CreateUser interface{}  `graphql:"createUser(input: {username: $username, password: $password})"`
+}
+
 type Register struct {
     vgrouter.NavigatorRef
     UserInfo	memstore.User	`vugu:"data"`
-    errorUser, errorPassword, errorRepeat, errorMatch bool
+    errorUser, errorPassword, errorRepeat, errorMatch, errorRegister bool
     repeatPassword string
 }
 
@@ -59,6 +65,7 @@ func (c *Register) HandleRepeat(event vugu.DOMEvent) {
 }
 
 func (c *Register) HandleSubmit(event vugu.DOMEvent) {    
+    ee := event.EventEnv()
     if len(c.UserInfo.Username) == 0 {
         c.errorUser = true
      }
@@ -78,9 +85,36 @@ func (c *Register) HandleSubmit(event vugu.DOMEvent) {
     
     if len(c.UserInfo.Username) != 0 && len(c.UserInfo.Password) != 0 { 
         if c.UserInfo.Password == c.repeatPassword {
-            c.errorUser, c.errorPassword, c.errorRepeat, c.errorMatch = false, false, false, false
+            c.errorUser, c.errorPassword, c.errorRepeat, c.errorMatch, c.errorRegister = false, false, false, false, false
             log.Printf("submit")
             // backend logic
+            go func () {
+                client := graphql.NewClient("http://localhost:8080/query", nil)
+
+                variables := map[string]interface{}{
+                    "username": graphql.String(c.UserInfo.Username),
+                    "password": graphql.String(c.UserInfo.Password),
+                }
+
+                err := client.Mutate(context.Background(), &q_createuser, variables)
+                if err != nil {
+                    fmt.Println(err)
+                }
+                fmt.Println(q_createuser.CreateUser, "token")
+
+                if fmt.Sprintf("%v", q_createuser.CreateUser) != "<nil>" {
+                    ee.Lock()
+                    fmt.Println("token available")
+                    js.Global().Get("localStorage").Call("setItem", "token", q_login.Login)
+                    c.Navigate("/movies", nil)
+                    ee.UnlockRender()
+                }
+
+                if fmt.Sprintf("%v", q_createuser.CreateUser) == "<nil>" {
+                    fmt.Println("token not available")
+                    c.errorRegister = true
+                }
+            }()
         }        
     }
 }

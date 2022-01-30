@@ -6,12 +6,23 @@
           <h1 class="c-movie--title">Trending movies</h1>
           <section class="o-movie-layout">
             <div vg-for='_, item := range c.MovieList'>
-                <img
+                <div class="c-movie-img">
+                  <img
                     class="c-movie--poster"
                     :src="item.Genre"
                     alt=""
                     @click='c.Navigate("/details", nil)'
-                />
+                  />
+                  <div class="o-layout-img--text">
+                    <div class="o-layout-movieinfo">
+                      <p class="c-movie--title__txt" vg-content='item.Title'></p>
+                      <div class="o-layout-infomovie">
+                        <p class="c-movie-hover--txt" vg-content='item.Description'></p>
+                        <p class="c-movie-hover--txt" vg-content='item.ReleaseDate'></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="o-layout-likes">
                     <div class="o-layout-likes-indv">
                     <svg

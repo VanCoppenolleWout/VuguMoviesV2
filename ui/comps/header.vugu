@@ -3,7 +3,7 @@
         <header class="c-header">
             <h1 class="c-header--title" @click='c.Navigate("/", nil)'>MovieCheckr</h1>
             <button vg-if='!c.signedIn' class="c-header--btn o-button-reset" @click='c.Navigate("/login", nil)'>Sign in</button>
-            <button vg-if='c.signedIn' class="c-header--btn o-button-reset" @click='c.handleSignOut(event)'>Sign out</button>
+            <button vg-if='c.signedIn' class="c-header--btn__out o-button-reset" @click='c.handleSignOut(event)'>Sign out</button>
         </header>
     </div>
 </div>
