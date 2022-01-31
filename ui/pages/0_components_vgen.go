@@ -984,6 +984,17 @@ type Details struct {
 		Likes		graphql.Int	`graphql:"likes"`
 		Comments	graphql.Int	`graphql:"comments"`
 	}
+
+	ReviewList	[]struct {
+		ID		graphql.String
+		Review		graphql.String
+		Date		graphql.String
+		Likes		graphql.Int
+		Comments	graphql.Int
+		User		struct {
+			Username graphql.String
+		}
+	}
 }
 
 var q_moviebyid struct {
@@ -998,6 +1009,19 @@ var q_moviebyid struct {
 		Likes		graphql.Int	`graphql:"likes"`
 		Comments	graphql.Int	`graphql:"comments"`
 	} `graphql:"movieById(id: $id)"`
+}
+
+var q_reviews struct {
+	Reviews []struct {
+		ID		graphql.String
+		Review		graphql.String
+		Date		graphql.String
+		Likes		graphql.Int
+		Comments	graphql.Int
+		User		struct {
+			Username graphql.String
+		}
+	}
 }
 
 func (c *Details) Init(ctx vugu.InitCtx) {
@@ -1022,6 +1046,21 @@ func (c *Details) Init(ctx vugu.InitCtx) {
 
 		c.MovieStorage = q_moviebyid.Movies
 		log.Println(c.MovieStorage, "data for detailpage")
+
+		ctx.EventEnv().UnlockRender()
+	}()
+
+	go func() {
+		client := graphql.NewClient("http://localhost:8080/query", nil)
+
+		err := client.Query(context.Background(), &q_reviews, nil)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		ctx.EventEnv().Lock()
+
+		c.ReviewList = q_reviews.Reviews
 
 		ctx.EventEnv().UnlockRender()
 	}()
@@ -1257,7 +1296,138 @@ func (c *Details) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 				vgparent.AppendChild(vgn)
 				vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-detail-reviews"}}}
 				vgparent.AppendChild(vgn)
-				vgn.SetInnerHTML(vugu.HTML("\n          \x3Cdiv class=\"c-review\"\x3E\n            \x3Cdiv class=\"o-layout-user\"\x3E\n              \x3Cp class=\"c-review-user\"\x3Ewoutvc\x3C/p\x3E\n              \x3Cp class=\"c-review-date\"\x3E18/01/2022 - 21:32\x3C/p\x3E\n            \x3C/div\x3E\n            \x3Cdiv\x3E\n              Imagine just chilling there, taking a nap, enjoying the ride.\n              Suddenly there comes somebody from the other direction, that had\n              the same amazing idea. But both you are either napping totally\n              unaware of the situation. And either if one was aware and braked,\n              you would still crash.\n            \x3C/div\x3E\n            \x3Cdiv class=\"o-layout-commentbtns\"\x3E\n              \x3Cbutton class=\"o-button-reset c-commentbox-cancel\" style=\"font-size: 0.875rem;\"\x3EReply\x3C/button\x3E\n              \x3Cbutton class=\"o-button-reset c-button-like--comment\"\x3E\n                \x3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\x3E\n                  \x3Cpath d=\"M18 15l-6-6-6 6\"\x3E\x3C/path\x3E\n                \x3C/svg\x3E\n                \x3Cp class=\"c-button-like--text\"\x3E10\x3C/p\x3E\n              \x3C/button\x3E\n              \x3Cbutton class=\"o-button-reset c-button-like--comment\"\x3E\n                \x3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\x3E\n                  \x3Cpath d=\"M6 9l6 6 6-6\"\x3E\x3C/path\x3E\n                \x3C/svg\x3E\n                \x3Cp class=\"c-button-like--text\"\x3E3\x3C/p\x3E\n              \x3C/button\x3E\n            \x3C/div\x3E\n            \n          \x3C/div\x3E\n          \x3Cdiv class=\"c-review\"\x3E\n            \x3Cdiv class=\"o-layout-user\"\x3E\n              \x3Cp class=\"c-review-user\"\x3Ewoutvc\x3C/p\x3E\n              \x3Cp class=\"c-review-date\"\x3E18/01/2022 - 21:32\x3C/p\x3E\n            \x3C/div\x3E\n            \x3Cdiv\x3E\n              Imagine just chilling there, taking a nap, enjoying the ride.\n              Suddenly there comes somebody from the other direction, that had\n              the same amazing idea. But both you are either napping totally\n              unaware of the situation. And either if one was aware and braked,\n              you would still crash.\n            \x3C/div\x3E\n            \x3Cdiv class=\"o-layout-commentbtns\"\x3E\n              \x3Cbutton class=\"o-button-reset c-commentbox-cancel\" style=\"font-size: 0.875rem;\"\x3EReply\x3C/button\x3E\n              \x3Cbutton class=\"o-button-reset c-button-like--comment\"\x3E\n                \x3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\x3E\n                  \x3Cpath d=\"M18 15l-6-6-6 6\"\x3E\x3C/path\x3E\n                \x3C/svg\x3E\n                \x3Cp class=\"c-button-like--text\"\x3E10\x3C/p\x3E\n              \x3C/button\x3E\n              \x3Cbutton class=\"o-button-reset c-button-like--comment\"\x3E\n                \x3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\x3E\n                  \x3Cpath d=\"M6 9l6 6 6-6\"\x3E\x3C/path\x3E\n                \x3C/svg\x3E\n                \x3Cp class=\"c-button-like--text\"\x3E3\x3C/p\x3E\n              \x3C/button\x3E\n            \x3C/div\x3E\n            \n          \x3C/div\x3E\n        "))
+				{
+					vgparent := vgn
+					_ = vgparent
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n          "}
+					vgparent.AppendChild(vgn)
+					for vgiterkeyt, item := range c.ReviewList {
+						var vgiterkey interface{} = vgiterkeyt
+						_ = vgiterkey
+						item := item
+						_ = item
+						vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-review"}}}
+						vgparent.AppendChild(vgn)
+						{
+							vgparent := vgn
+							_ = vgparent
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+							vgparent.AppendChild(vgn)
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-layout-user"}}}
+							vgparent.AppendChild(vgn)
+							{
+								vgparent := vgn
+								_ = vgparent
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n              "}
+								vgparent.AppendChild(vgn)
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "p", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-review-user"}}}
+								vgparent.AppendChild(vgn)
+								vgn.SetInnerHTML(item.User.Username)
+								{
+									vgparent := vgn
+									_ = vgparent
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "woutvc"}
+									vgparent.AppendChild(vgn)
+								}
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n              "}
+								vgparent.AppendChild(vgn)
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "p", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-review-date"}}}
+								vgparent.AppendChild(vgn)
+								vgn.SetInnerHTML(item.Date)
+								{
+									vgparent := vgn
+									_ = vgparent
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "18/01/2022 - 21:32"}
+									vgparent.AppendChild(vgn)
+								}
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+								vgparent.AppendChild(vgn)
+							}
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+							vgparent.AppendChild(vgn)
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute(nil)}
+							vgparent.AppendChild(vgn)
+							vgn.SetInnerHTML(item.Review)
+							{
+								vgparent := vgn
+								_ = vgparent
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n              Imagine just chilling there, taking a nap, enjoying the ride.\n              Suddenly there comes somebody from the other direction, that had\n              the same amazing idea. But both you are either napping totally\n              unaware of the situation. And either if one was aware and braked,\n              you would still crash.\n            "}
+								vgparent.AppendChild(vgn)
+							}
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+							vgparent.AppendChild(vgn)
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-layout-commentbtns"}}}
+							vgparent.AppendChild(vgn)
+							{
+								vgparent := vgn
+								_ = vgparent
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n              "}
+								vgparent.AppendChild(vgn)
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-button-reset c-commentbox-cancel"}, vugu.VGAttribute{Namespace: "", Key: "style", Val: "font-size: 0.875rem;"}}}
+								vgparent.AppendChild(vgn)
+								vgn.SetInnerHTML(vugu.HTML("Reply"))
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n              "}
+								vgparent.AppendChild(vgn)
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-button-reset c-button-like--comment"}}}
+								vgparent.AppendChild(vgn)
+								{
+									vgparent := vgn
+									_ = vgparent
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+									vgparent.AppendChild(vgn)
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "svg", Data: "svg", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "xmlns", Val: "http://www.w3.org/2000/svg"}, vugu.VGAttribute{Namespace: "", Key: "width", Val: "24"}, vugu.VGAttribute{Namespace: "", Key: "height", Val: "24"}, vugu.VGAttribute{Namespace: "", Key: "viewBox", Val: "0 0 24 24"}, vugu.VGAttribute{Namespace: "", Key: "fill", Val: "none"}, vugu.VGAttribute{Namespace: "", Key: "stroke", Val: "#000000"}, vugu.VGAttribute{Namespace: "", Key: "stroke-width", Val: "2"}, vugu.VGAttribute{Namespace: "", Key: "stroke-linecap", Val: "round"}, vugu.VGAttribute{Namespace: "", Key: "stroke-linejoin", Val: "round"}}}
+									vgparent.AppendChild(vgn)
+									vgn.SetInnerHTML(vugu.HTML("\n                  \x3Cpath d=\"M18 15l-6-6-6 6\"\x3E\x3C/path\x3E\n                "))
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+									vgparent.AppendChild(vgn)
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "p", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-button-like--text"}}}
+									vgparent.AppendChild(vgn)
+									vgn.SetInnerHTML(item.Likes)
+									{
+										vgparent := vgn
+										_ = vgparent
+										vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "10"}
+										vgparent.AppendChild(vgn)
+									}
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n              "}
+									vgparent.AppendChild(vgn)
+								}
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n              "}
+								vgparent.AppendChild(vgn)
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-button-reset c-button-like--comment"}}}
+								vgparent.AppendChild(vgn)
+								{
+									vgparent := vgn
+									_ = vgparent
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+									vgparent.AppendChild(vgn)
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "svg", Data: "svg", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "xmlns", Val: "http://www.w3.org/2000/svg"}, vugu.VGAttribute{Namespace: "", Key: "width", Val: "24"}, vugu.VGAttribute{Namespace: "", Key: "height", Val: "24"}, vugu.VGAttribute{Namespace: "", Key: "viewBox", Val: "0 0 24 24"}, vugu.VGAttribute{Namespace: "", Key: "fill", Val: "none"}, vugu.VGAttribute{Namespace: "", Key: "stroke", Val: "#000000"}, vugu.VGAttribute{Namespace: "", Key: "stroke-width", Val: "2"}, vugu.VGAttribute{Namespace: "", Key: "stroke-linecap", Val: "round"}, vugu.VGAttribute{Namespace: "", Key: "stroke-linejoin", Val: "round"}}}
+									vgparent.AppendChild(vgn)
+									vgn.SetInnerHTML(vugu.HTML("\n                  \x3Cpath d=\"M6 9l6 6 6-6\"\x3E\x3C/path\x3E\n                "))
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
+									vgparent.AppendChild(vgn)
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "p", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-button-like--text"}}}
+									vgparent.AppendChild(vgn)
+									vgn.SetInnerHTML(item.Comments)
+									{
+										vgparent := vgn
+										_ = vgparent
+										vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "3"}
+										vgparent.AppendChild(vgn)
+									}
+									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n              "}
+									vgparent.AppendChild(vgn)
+								}
+								vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+								vgparent.AppendChild(vgn)
+							}
+							vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            \n          "}
+							vgparent.AppendChild(vgn)
+						}
+					}
+					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n        "}
+					vgparent.AppendChild(vgn)
+				}
 				vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n      "}
 				vgparent.AppendChild(vgn)
 			}

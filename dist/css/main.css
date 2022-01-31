@@ -3,27 +3,27 @@
 \*------------------------------------*/
 
 @font-face {
-  font-family: "Montserrat";
+  font-family: 'Montserrat';
   font-weight: 300;
-  src: url("../fonts/Montserrat-Light.ttf") format("ttf");
+  src: url('../fonts/Montserrat-Light.ttf') format('ttf');
 }
 
 @font-face {
-  font-family: "Montserrat";
+  font-family: 'Montserrat';
   font-weight: 400;
-  src: url("../fonts/Montserrat-Regular.ttf") format("ttf");
+  src: url('../fonts/Montserrat-Regular.ttf') format('ttf');
 }
 
 @font-face {
-  font-family: "Montserrat";
+  font-family: 'Montserrat';
   font-weight: 500;
-  src: url("../fonts/Montserrat-Medium.ttf") format("ttf");
+  src: url('../fonts/Montserrat-Medium.ttf') format('ttf');
 }
 
 @font-face {
-  font-family: "Montserrat";
+  font-family: 'Montserrat';
   font-weight: 600;
-  src: url("../fonts/Montserrat-SemiBold.ttf") format("ttf");
+  src: url('../fonts/Montserrat-SemiBold.ttf') format('ttf');
 }
 
 /*------------------------------------*\
@@ -110,7 +110,7 @@ html {
   height: 100%;
   font-size: 16px;
   line-height: 1.5;
-  font-family: "Montserrat", Helvetica, arial, sans-serif;
+  font-family: 'Montserrat', Helvetica, arial, sans-serif;
   color: var(--global-color-neutral-xxxx-dark);
   background: var(--global-color-background);
   box-sizing: border-box;
@@ -799,6 +799,7 @@ input::placeholder {
   margin: 0;
   text-align: center;
   width: 100%;
+  color: #5b6f82;
 }
 
 .o-likes-layout {
@@ -832,10 +833,12 @@ input::placeholder {
   font-size: 0.875rem;
   margin: 0;
   padding-top: 0.125rem;
+  color: #5b6f82;
 }
 
 .c-detail-reviews {
   margin-top: 2rem;
+  box-shadow: 0px 10px 35px 13px rgba(0, 0, 0, 0.03);
 }
 
 .o-layout-commentbtns {
@@ -862,6 +865,11 @@ input::placeholder {
 .c-commentbox-cancel {
   font-weight: 500;
   cursor: pointer;
+  color: #5b6f82;
+}
+
+.c-commentbox-cancel:hover {
+  color: black;
 }
 
 .c-commentbox-post {
@@ -930,6 +938,10 @@ input::placeholder {
 .c-svg--404 {
   width: 100%;
   height: 70%;
+}
+
+.c-review-text {
+  font-weight: 400;
 }
 
 @media (min-width: 458px) {
@@ -1110,6 +1122,12 @@ input::placeholder {
 
   .c-landing--text {
     max-width: 70%;
+  }
+
+  .c-detail-reviews {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: var(--global-borderRadius);
   }
 }
 

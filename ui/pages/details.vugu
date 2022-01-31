@@ -92,12 +92,12 @@
           </div>
         </div>
         <div class="c-detail-reviews">
-          <div class="c-review">
+          <div vg-for='_, item := range c.ReviewList' class="c-review">
             <div class="o-layout-user">
-              <p class="c-review-user">woutvc</p>
-              <p class="c-review-date">18/01/2022 - 21:32</p>
+              <p class="c-review-user" vg-content='item.User.Username'>woutvc</p>
+              <p class="c-review-date" vg-content='item.Date'>18/01/2022 - 21:32</p>
             </div>
-            <div>
+            <div vg-content='item.Review'>
               Imagine just chilling there, taking a nap, enjoying the ride.
               Suddenly there comes somebody from the other direction, that had
               the same amazing idea. But both you are either napping totally
@@ -120,7 +120,7 @@
                 >
                   <path d="M18 15l-6-6-6 6" />
                 </svg>
-                <p class="c-button-like--text">10</p>
+                <p class="c-button-like--text" vg-content='item.Likes'>10</p>
               </button>
               <button class="o-button-reset c-button-like--comment">
                 <svg
@@ -136,56 +136,7 @@
                 >
                   <path d="M6 9l6 6 6-6" />
                 </svg>
-                <p class="c-button-like--text">3</p>
-              </button>
-            </div>
-            
-          </div>
-          <div class="c-review">
-            <div class="o-layout-user">
-              <p class="c-review-user">woutvc</p>
-              <p class="c-review-date">18/01/2022 - 21:32</p>
-            </div>
-            <div>
-              Imagine just chilling there, taking a nap, enjoying the ride.
-              Suddenly there comes somebody from the other direction, that had
-              the same amazing idea. But both you are either napping totally
-              unaware of the situation. And either if one was aware and braked,
-              you would still crash.
-            </div>
-            <div class="o-layout-commentbtns">
-              <button class="o-button-reset c-commentbox-cancel" style="font-size: 0.875rem;">Reply</button>
-              <button class="o-button-reset c-button-like--comment">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#000000"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M18 15l-6-6-6 6" />
-                </svg>
-                <p class="c-button-like--text">10</p>
-              </button>
-              <button class="o-button-reset c-button-like--comment">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#000000"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
-                <p class="c-button-like--text">3</p>
+                <p class="c-button-like--text" vg-content='item.Comments'>3</p>
               </button>
             </div>
             
@@ -221,7 +172,18 @@ type Details struct {
       Length graphql.String `graphql:"length"`
       Likes graphql.Int `graphql:"likes"`
       Comments graphql.Int `graphql:"comments"`
-    }
+  }
+
+  ReviewList []struct {
+			ID graphql.String
+			Review graphql.String
+			Date graphql.String
+			Likes graphql.Int
+			Comments graphql.Int
+			User struct {
+				Username graphql.String
+			}
+		}
 }
 
 var q_moviebyid struct {
@@ -237,6 +199,19 @@ var q_moviebyid struct {
 		Comments graphql.Int `graphql:"comments"`
   } `graphql:"movieById(id: $id)"`
 }
+
+var q_reviews struct {
+		Reviews []struct {
+			ID graphql.String
+			Review graphql.String
+			Date graphql.String
+			Likes graphql.Int
+			Comments graphql.Int
+			User struct {
+				Username graphql.String
+			}
+		}
+	}
 
 func (c *Details) Init(ctx vugu.InitCtx) { 
   c.tokenMovieId = js.Global().Get("localStorage").Call("getItem", "movieItem").String()
@@ -263,6 +238,21 @@ func (c *Details) Init(ctx vugu.InitCtx) {
 
     ctx.EventEnv().UnlockRender()
   }()
+
+  go func() {
+    client := graphql.NewClient("http://localhost:8080/query", nil)
+
+    err := client.Query(context.Background(), &q_reviews, nil)
+    if err != nil {
+      fmt.Println(err)
+    }
+
+    ctx.EventEnv().Lock()
+
+    c.ReviewList = q_reviews.Reviews
+
+    ctx.EventEnv().UnlockRender()
+    }()
   
   log.Println(c.tokenLogin, "detail token storage")
     if c.tokenLogin == "<null>" {
