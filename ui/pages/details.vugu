@@ -2,30 +2,36 @@
     <comps:Header></comps:Header>
     <div class="o-container-sm">
       <div class="o-detail-layout">
-        <div class="o-layout-detail">
+        <div class="o-layout-detail" vg-for='_, item := range c.MovieStorage'>
           <img
             class="c-movie--poster-big"
-            src="https://firebasestorage.googleapis.com/v0/b/pizza-backend-67c13.appspot.com/o/Pizzas%2Fmovie_placeholder.jpeg?alt=media&token=e94c881a-8a95-45a5-9d6c-f716581407b3"
+            :src="item.Genre"
             alt=""
           />
           <div class="c-detail-rating">
             <div>
               <div class="c-detail-titlesection">
-                <p class="c-detail--title">Don't Look Up</p>
-                <p class="c-detail--in">2021, Sciencefiction, 2h 25m</p>
+                <p class="c-detail--title" vg-content='item.Title'>Don't Look Up</p>
+                <span style="margin-bottom: 2rem;">
+                  <span class="c-detail--in" vg-content='item.ReleaseDate'></span>
+                  <span class="c-detail--in">, </span>
+                  <span class="c-detail--in" vg-content='item.Description'></span>
+                  <span class="c-detail--in">, </span>
+                  <span class="c-detail--in" vg-content='item.Length'></span>
+                </span>
               </div>
   
               <div class="c-detail-mainsection">
                 <div class="c-detail-section">
-                  <p class="c-detail--rating">43</p>
+                  <p class="c-detail--rating" vg-content='item.Likes'></p>
                   <p class="c-detail--text">Likes</p>
                 </div>
                 <div class="c-detail-section">
-                  <p class="c-detail--rating">13</p>
+                  <p class="c-detail--rating" vg-content='item.Likes'></p>
                   <p class="c-detail--text">Comments</p>
                 </div>
                 <div class="c-detail-section">
-                  <p class="c-detail--rating">76%</p>
+                  <p class="c-detail--rating" vg-content='rand.Intn(100 - 40) + 40'></p>
                   <p class="c-detail--text">Score</p>
                 </div>
               </div>
@@ -198,6 +204,7 @@ import (
     "github.com/shurcooL/graphql"
     "log"
     "fmt"
+    "math/rand"
 )
 
 type Details struct {
