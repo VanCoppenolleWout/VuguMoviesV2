@@ -1,5 +1,9 @@
 package memstore
 
+import (
+	"github.com/shurcooL/graphql"
+)
+
 type Taco struct {
 	ID          int     `json:"id"`
 	Title       string  `json:"title"`
@@ -29,6 +33,18 @@ type Movie struct {
 	Length      string `json:"length"`
 	Likes       int    `json:"likes"`
 	Comments    int    `json:"comments"`
+}
+
+type MovieItem struct {
+	ID graphql.String `graphql:"id"`
+	Title graphql.String `graphql:"title"`
+	Genre graphql.String `graphql:"genre"`
+	ImgUrl graphql.String `graphql:"imgUrl"`
+	Description graphql.String `graphql:"description"`
+	ReleaseDate graphql.Int `graphql:"releaseDate"`
+	Length graphql.String `graphql:"length"`
+	Likes graphql.Int `graphql:"likes"`
+	Comments graphql.Int `graphql:"comments"`
 }
 
 type User struct {

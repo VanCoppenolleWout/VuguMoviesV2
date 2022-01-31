@@ -104,6 +104,7 @@ var indexHTML = `<!doctype html>
 <meta charset="utf-8"/>
     <link rel="stylesheet" href="/css/main.css">
 <!-- styles -->
+<title>MovieCheckr</title>
 </head>
 <body>
 <div id="vugu_mount_point">

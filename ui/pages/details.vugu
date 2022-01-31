@@ -195,9 +195,74 @@
 
 import (
     "github.com/vugu-examples/taco-store/ui/comps"
+    "github.com/shurcooL/graphql"
+    "log"
+    "fmt"
 )
 
-type Detail struct {}
+type Details struct {
+  vgrouter.NavigatorRef
+  tokenMovieId, tokenLogin string
 
+  MovieStorage []struct {
+      ID graphql.String `graphql:"id"`
+      Title graphql.String `graphql:"title"`
+      Genre graphql.String `graphql:"genre"`
+      ImgUrl graphql.String `graphql:"imgUrl"`
+      Description graphql.String `graphql:"description"`
+      ReleaseDate graphql.Int `graphql:"releaseDate"`
+      Length graphql.String `graphql:"length"`
+      Likes graphql.Int `graphql:"likes"`
+      Comments graphql.Int `graphql:"comments"`
+    }
+}
+
+var q_moviebyid struct {
+  Movies []struct {
+    ID graphql.String `graphql:"id"`
+		Title graphql.String `graphql:"title"`
+		Genre graphql.String `graphql:"genre"`
+		ImgUrl graphql.String `graphql:"imgUrl"`
+		Description graphql.String `graphql:"description"`
+		ReleaseDate graphql.Int `graphql:"releaseDate"`
+		Length graphql.String `graphql:"length"`
+		Likes graphql.Int `graphql:"likes"`
+		Comments graphql.Int `graphql:"comments"`
+  } `graphql:"movieById(id: $id)"`
+}
+
+func (c *Details) Init(ctx vugu.InitCtx) { 
+  c.tokenMovieId = js.Global().Get("localStorage").Call("getItem", "movieItem").String()
+  log.Println(c.tokenMovieId, "token movie in details")
+  c.tokenLogin = js.Global().Get("localStorage").Call("getItem", "token").String()
+  go func() {
+    client := graphql.NewClient("http://localhost:8080/query", nil)
+
+    variables := map[string]interface{}{
+		  "id":   graphql.ID(c.tokenMovieId),
+	  } 
+
+    err := client.Query(context.Background(), &q_moviebyid, variables)
+    if err != nil {
+      fmt.Println(err)
+    }
+
+    ctx.EventEnv().Lock()
+
+    fmt.Println(q_moviebyid.Movies)
+
+    c.MovieStorage = q_moviebyid.Movies
+    log.Println(c.MovieStorage, "data for detailpage")
+
+    ctx.EventEnv().UnlockRender()
+  }()
+  
+  log.Println(c.tokenLogin, "detail token storage")
+    if c.tokenLogin == "<null>" {
+      ctx.EventEnv().Lock()
+      c.Navigate("/", nil)
+      ctx.EventEnv().UnlockRender()
+  }
+}
 
 </script>
