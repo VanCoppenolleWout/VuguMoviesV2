@@ -40,10 +40,10 @@ func main() {
 	}
 
 	// run go generate
-	fmt.Print(distutil.MustExec("go", "generate", "."))
+	fmt.Print(distutil.MustExec("go", "generate", "./ui"))
 
 	// run go build for wasm binary
-	fmt.Print(distutil.MustEnvExec([]string{"GOOS=js", "GOARCH=wasm"}, "go", "build", "-o", filepath.Join(*dist, "main.wasm"), "."))
+	fmt.Print(distutil.MustEnvExec([]string{"GOOS=js", "GOARCH=wasm"}, "go", "build", "-o", filepath.Join(*dist, "index.wasm"), "./wasm/index"))
 
 	// STATIC INDEX FILE:
 	// if you are hosting with a static file server or CDN, you can write out the default index.html from simplehttp

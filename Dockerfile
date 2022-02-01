@@ -11,20 +11,16 @@ RUN go mod download
 
 COPY . .
 
-RUN go get -d -v ./...
-
 RUN go get github.com/vugu/vugu/cmd/vugugen
 
-RUN go generate .
+RUN go build -o bin/server ./cmd/server
 
-RUN GOOS=js GOARCH=wasm go build -o dist/main.wasm .
+RUN go generate ./ui
 
-CMD [ "." ]
+RUN GOARCH=wasm GOOS=js go build -o /index.wasm ./wasm/index
 
-#final stage
-# FROM alpine:latest
-# RUN apk --no-cache add ca-certificates
-# COPY --from=builder /go/bin/app /app
-# ENTRYPOINT /app
-# LABEL Name=vugumoviesv2 Version=0.0.1
+RUN go get -u github.com/vugu/vgrun
+RUN vgrun -install-tools
+
 EXPOSE 8844
+
