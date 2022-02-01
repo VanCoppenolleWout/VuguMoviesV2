@@ -1043,6 +1043,7 @@ input::placeholder {
     column-gap: 2rem;
     justify-content: space-between;
     margin: 2.5rem 2rem;
+    width: 50rem
   }
 
   .o-detail-layout {
@@ -1072,7 +1073,7 @@ input::placeholder {
     background-color: white;
     border-radius: var(--global-borderRadius);
     box-shadow: var(--global-input-boxShadow);
-    width: 40rem;
+    width: 22.5rem;
     height: 50rem;
     padding: 2rem;
   }

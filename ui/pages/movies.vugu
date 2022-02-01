@@ -91,36 +91,32 @@
             </div>
             <div style="margin-top: 0.5rem">
               <div class="o-checkbox-layout">
-                <input type="checkbox" name="" id="action" />
+                <input type="radio" name="genre" id="everything" />
+                <label for="everything">Everything</label>
+              </div>
+              <div class="o-checkbox-layout">
+                <input type="radio" name="genre" id="drama" @click='c.filterType = "drama"; c.handleRadio(event)' />
+                <label for="drama">Drama</label>
+              </div>
+              <div class="o-checkbox-layout">
+                <input type="radio" name="genre" id="comedy" @click='c.filterType = "comedy"; c.handleRadio(event)'/>
+                <label for="comedy">Comedy</label>
+              </div>
+              <div class="o-checkbox-layout">
+                <input type="radio" name="genre" id="sciencefiction" @click='c.filterType = "science fiction"; c.handleRadio(event)'/>
+                <label for="sciencefiction">Science Fiction</label>
+              </div>
+              <div class="o-checkbox-layout">
+                <input type="radio" name="genre" id="fantasy" @click='c.filterType = "fantasy"; c.handleRadio(event)'/>
+                <label for="fantasy">Fantasy</label>
+              </div>
+              <div class="o-checkbox-layout">
+                <input type="radio" name="genre" id="action" @click='c.filterType = "action"; c.handleRadio(event)'/>
                 <label for="action">Action</label>
               </div>
               <div class="o-checkbox-layout">
-                <input type="checkbox" name="" id="adventure" />
-                <label for="action">Adventure</label>
-              </div>
-              <div class="o-checkbox-layout">
-                <input type="checkbox" name="" id="comedy" />
-                <label for="action">Comedy</label>
-              </div>
-              <div class="o-checkbox-layout">
-                <input type="checkbox" name="" id="crime" />
-                <label for="action">Crime</label>
-              </div>
-              <div class="o-checkbox-layout">
-                <input type="checkbox" name="" id="horror" />
-                <label for="action">Horror</label>
-              </div>
-              <div class="o-checkbox-layout">
-                <input type="checkbox" name="" id="thriller" />
-                <label for="action">Thriller</label>
-              </div>
-              <div class="o-checkbox-layout">
-                <input type="checkbox" name="" id="romance" />
-                <label for="action">Romance</label>
-              </div>
-              <div class="o-checkbox-layout">
-                <input type="checkbox" name="" id="drama" />
-                <label for="action">Drama</label>
+                <input type="radio" name="genre" id="thriller" @click='c.filterType = "thriller"; c.handleRadio(event)'/>
+                <label for="thriller">Thriller</label>
               </div>
             </div>
           </section>
@@ -173,7 +169,6 @@ import (
     "github.com/vugu-examples/taco-store/ui/state"
     "github.com/vugu-examples/taco-store/internal/memstore"
     "github.com/hasura/go-graphql-client"
-    //"github.com/machinebox/graphql"
     "encoding/json"
     "fmt"
     "context"
@@ -184,6 +179,7 @@ type Movies struct {
     
     Items string `vugu:"data"`
     token string
+    filterType string `vugu:"data"`
 
     MovieObject struct {
       ID graphql.String `graphql:"id"`
@@ -224,9 +220,24 @@ var q_movies struct {
 	}
 }
 
+var q_moviebygenre struct {
+  Movies []struct {
+    ID graphql.String `graphql:"id"`
+    Title graphql.String `graphql:"title"`
+    Genre graphql.String `graphql:"genre"`
+    ImgUrl graphql.String `graphql:"imgUrl"`
+    Description graphql.String `graphql:"description"`
+    ReleaseDate graphql.Int `graphql:"releaseDate"`
+    Length graphql.String `graphql:"length"`
+    Likes graphql.Int `graphql:"likes"`
+    Comments graphql.Int `graphql:"comments"`
+  } `graphql:"movieByGenre(genre: $genre)"`
+}
+
 func (c *Movies) Init(ctx vugu.InitCtx) {
     c.token = js.Global().Get("localStorage").Call("getItem", "token").String()
     //log.Println(c.token)
+    c.MovieList = nil
 
     if c.token == "<null>" {
         c.Navigate("/", nil)
@@ -257,6 +268,29 @@ func (c *Movies) HandleMovie(event vugu.DOMEvent) {
         log.Println(str)
         c.Navigate("/details", nil)
         ee.UnlockRender()
+    }()
+}
+
+func (c *Movies) handleRadio(event vugu.DOMEvent) {
+  ee := event.EventEnv()
+  c.MovieList = nil
+  q_moviebygenre.Movies = nil 
+  log.Println(c.filterType)
+  go func() {
+    ee.Lock()
+    client := graphql.NewClient("http://localhost:8080/query", nil)
+
+    variables := map[string]interface{}{
+		  "genre":   graphql.String(c.filterType),
+	  } 
+
+    err := client.Query(context.Background(), &q_moviebygenre, variables)
+    if err != nil {
+      fmt.Println(err)
+    }
+    c.MovieList = q_moviebygenre.Movies
+
+    ee.UnlockRender()
     }()
 }
 
