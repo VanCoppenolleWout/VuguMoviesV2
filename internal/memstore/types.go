@@ -1,7 +1,7 @@
 package memstore
 
 import (
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type Taco struct {

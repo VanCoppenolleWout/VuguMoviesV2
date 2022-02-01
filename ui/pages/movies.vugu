@@ -172,7 +172,7 @@ import (
     "github.com/vugu-examples/taco-store/ui/comps"
     "github.com/vugu-examples/taco-store/ui/state"
     "github.com/vugu-examples/taco-store/internal/memstore"
-    "github.com/shurcooL/graphql"
+    "github.com/hasura/go-graphql-client"
     //"github.com/machinebox/graphql"
     "encoding/json"
     "fmt"

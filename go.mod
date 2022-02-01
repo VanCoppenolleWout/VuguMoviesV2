@@ -3,7 +3,9 @@ module github.com/vugu-examples/taco-store
 go 1.14
 
 require (
+	github.com/hasura/go-graphql-client v0.6.2 // indirect
 	github.com/julienschmidt/httprouter v1.3.0
+	github.com/klauspost/compress v1.14.2 // indirect
 	github.com/machinebox/graphql v0.2.2
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect

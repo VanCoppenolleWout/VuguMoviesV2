@@ -760,6 +760,19 @@ input::placeholder {
   border-color: var(--global-color-neutral-xx-light);
 }
 
+.o-layout-reply {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
+}
+
+.o-layout-reply--btns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
 .c-button-like {
   border: 1px solid var(--global-color-neutral-dark);
   border-radius: var(--global-borderRadius-xs);

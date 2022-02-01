@@ -76,6 +76,7 @@
 
         <div class="c-commentbox">
           <textarea
+            @change='c.HandleTextArea(event)'
             class="c-commentbox-input"
             name=""
             id=""
@@ -86,8 +87,8 @@
           <div class="o-layout-commentbox">
             <div></div>
             <div class="o-layout-commentbox--btn">
-              <button class="c-commentbox-cancel o-button-reset">Cancel</button>
-              <button class="c-commentbox-post o-button-reset">Post</button>
+              <button @click='c.HandleCancel(event)' class="c-commentbox-cancel o-button-reset">Cancel</button>
+              <button @click='c.HandlePostReview(event)' class="c-commentbox-post o-button-reset">Post</button>
             </div>
           </div>
         </div>
@@ -105,7 +106,8 @@
               you would still crash.
             </div>
             <div class="o-layout-commentbtns">
-              <button class="o-button-reset c-commentbox-cancel" style="font-size: 0.875rem;">Reply</button>
+              <button vg-if='!c.showCommentBox' @click='c.HandleCommentbox(event)' class="o-button-reset c-commentbox-cancel" style="font-size: 0.875rem;">Reply</button>
+              <button vg-if='c.showCommentBox' @click='c.showCommentBox = !c.showCommentBox' class="o-button-reset c-commentbox-cancel" style="font-size: 0.875rem;">Cancel</button>
               <button class="o-button-reset c-button-like--comment">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -139,6 +141,13 @@
                 <p class="c-button-like--text" vg-content='item.Comments'>3</p>
               </button>
             </div>
+            <div vg-if='c.showCommentBox' class="o-layout-reply">
+              <textarea class="c-commentbox-input"  name="" id="" cols="30" rows="10" placeholder="Reply..."></textarea>
+              <div class="o-layout-reply--btns">
+                <button class="o-button-reset c-commentbox-post ">Comment</button>
+                <div></div>
+              </div>
+            </div>
             
           </div>
         </div>
@@ -152,15 +161,18 @@
 
 import (
     "github.com/vugu-examples/taco-store/ui/comps"
-    "github.com/shurcooL/graphql"
+    "github.com/hasura/go-graphql-client"
     "log"
     "fmt"
     "math/rand"
+    "net/http"
 )
 
 type Details struct {
   vgrouter.NavigatorRef
   tokenMovieId, tokenLogin string
+  TextAreaInput string
+  showCommentBox bool
 
   MovieStorage []struct {
       ID graphql.String `graphql:"id"`
@@ -201,17 +213,29 @@ var q_moviebyid struct {
 }
 
 var q_reviews struct {
-		Reviews []struct {
-			ID graphql.String
-			Review graphql.String
-			Date graphql.String
-			Likes graphql.Int
-			Comments graphql.Int
-			User struct {
-				Username graphql.String
-			}
-		}
-	}
+  Reviews []struct {
+    ID graphql.String
+    Review graphql.String
+    Date graphql.String
+    Likes graphql.Int
+    Comments graphql.Int
+    User struct {
+      Username graphql.String
+    }
+  }
+}
+
+var q_createreview struct {
+  CreateReview struct {
+    Review graphql.String
+    Date graphql.String
+    Likes graphql.Int
+    Comments graphql.Int
+    User struct {
+      Username graphql.String
+    }
+  } `graphql:"createReview(input: {review: $review, date: $date, likes: $likes, comments: $comments})"`
+}
 
 func (c *Details) Init(ctx vugu.InitCtx) { 
   c.tokenMovieId = js.Global().Get("localStorage").Call("getItem", "movieItem").String()
@@ -259,6 +283,47 @@ func (c *Details) Init(ctx vugu.InitCtx) {
       ctx.EventEnv().Lock()
       c.Navigate("/", nil)
       ctx.EventEnv().UnlockRender()
+  }
+}
+
+func (c *Details) HandleCommentbox(event vugu.DOMEvent) {
+  c.showCommentBox = true
+}
+
+func (c *Details) HandleTextArea(event vugu.DOMEvent) {
+  c.TextAreaInput = event.PropString("target", "value")
+}
+
+func (c *Details) HandleCancel(event vugu.DOMEvent) {
+  //c.TextAreaInput = event.PropString("target", "value")
+}
+
+func setAuthHeader(secret string) func(req *http.Request) {
+	return func(req *http.Request) {
+		req.Header.Add("Authorization", secret)
+	}
+}
+
+func (c *Details) HandlePostReview(event vugu.DOMEvent) {
+  log.Println(c.TextAreaInput)
+  if len(c.TextAreaInput) > 0 {
+    log.Println("submit review")
+    go func () {
+      client := graphql.NewClient("http://localhost:8080/query", nil)
+      client = client.WithRequestModifier(setAuthHeader(c.tokenLogin))
+
+      variables := map[string]interface{}{
+        "review": graphql.String(c.TextAreaInput),
+        "date": graphql.String("2022-01-21 13:30:00"),
+        "likes": graphql.Int(0),
+        "comments": graphql.Int(0),
+      }
+
+      err := client.Mutate(context.Background(), &q_createreview, variables)
+      if err != nil {
+        fmt.Println(err)
+      }
+    }()
   }
 }
 
