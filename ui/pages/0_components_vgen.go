@@ -2011,6 +2011,7 @@ type Movies struct {
 	GenreFilter	bool
 	YearFilter	bool
 	Year		string
+	ClearState	bool
 
 	MovieObject	struct {
 		ID		graphql.String	`graphql:"id"`
@@ -2099,6 +2100,7 @@ func (c *Movies) Init(ctx vugu.InitCtx) {
 	c.MovieList = nil
 	q_moviebygenre.Movies = nil
 	q_moviebyyear.Movies = nil
+	q_moviesclear.Movies = nil
 
 	if c.token == "<null>" {
 		c.Navigate("/", nil)
@@ -2133,10 +2135,12 @@ func (c *Movies) HandleMovie(event vugu.DOMEvent) {
 }
 
 func (c *Movies) handleRadio(event vugu.DOMEvent) {
+	c.ClearState = false
 	ee := event.EventEnv()
 	c.MovieList = nil
 	q_moviebygenre.Movies = nil
 	q_moviebyyear.Movies = nil
+	q_moviesclear.Movies = nil
 	log.Println(c.filterType)
 	go func() {
 		ee.Lock()
@@ -2157,12 +2161,14 @@ func (c *Movies) handleRadio(event vugu.DOMEvent) {
 }
 
 func (c *Movies) HandleInputYear(event vugu.DOMEvent) {
+	c.ClearState = false
 	c.Year = event.PropString("target", "value")
 	data, _ := strconv.Atoi(c.Year)
 	ee := event.EventEnv()
 	c.MovieList = nil
 	q_moviebygenre.Movies = nil
 	q_moviebyyear.Movies = nil
+	q_moviesclear.Movies = nil
 	go func() {
 		ee.Lock()
 		client := graphql.NewClient("http://localhost:8080/query", nil)
@@ -2182,6 +2188,8 @@ func (c *Movies) HandleInputYear(event vugu.DOMEvent) {
 }
 
 func (c *Movies) HandleClear(event vugu.DOMEvent) {
+	c.ClearState = true
+	c.filterType = ""
 	ee := event.EventEnv()
 	c.MovieList = nil
 	q_moviebygenre.Movies = nil
