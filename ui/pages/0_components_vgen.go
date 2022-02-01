@@ -2173,7 +2173,7 @@ func (c *Movies) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 					vgparent.AppendChild(vgn)
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "h1", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie--title"}}}
 					vgparent.AppendChild(vgn)
-					vgn.SetInnerHTML(vugu.HTML("Trending movies"))
+					vgn.SetInnerHTML(vugu.HTML("All movies"))
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n          "}
 					vgparent.AppendChild(vgn)
 					vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "section", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-movie-layout"}}}

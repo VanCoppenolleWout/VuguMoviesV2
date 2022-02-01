@@ -367,6 +367,7 @@ input::placeholder {
   flex-wrap: wrap;
   flex-direction: row;
   gap: 1.5rem;
+  width: 50rem;
 }
 
 .c-header {
@@ -1043,7 +1044,6 @@ input::placeholder {
     column-gap: 2rem;
     justify-content: space-between;
     margin: 2.5rem 2rem;
-    width: 50rem
   }
 
   .o-detail-layout {

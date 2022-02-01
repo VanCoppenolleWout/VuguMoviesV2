@@ -3,7 +3,7 @@
     <div class="o-container">
       <div class="o-movies-layout">
         <div class="c-movie">
-          <h1 class="c-movie--title">Trending movies</h1>
+          <h1 class="c-movie--title">All movies</h1>
           <section class="o-movie-layout">
             <div vg-for='_, item := range c.MovieList'>
                 <div class="c-movie-img" @click='c.MovieObject = item; c.HandleMovie(event)'>
