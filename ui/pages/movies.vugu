@@ -3,7 +3,8 @@
     <div class="o-container">
       <div class="o-movies-layout">
         <div class="c-movie">
-          <h1 class="c-movie--title">All movies</h1>
+          <h1 vg-if='len(c.filterType) == 0' class="c-movie--title">All movies</h1>
+          <h1 vg-if='len(c.filterType) > 0' class="c-movie--title"><span vg-content='c.filterType'></span> movies</h1>
           <section class="o-movie-layout">
             <div vg-for='_, item := range c.MovieList'>
                 <div class="c-movie-img" @click='c.MovieObject = item; c.HandleMovie(event)'>
@@ -68,7 +69,7 @@
         <aside class="c-filter">
           <div class="o-filter-layout" style="margin-bottom: 2rem">
             <h2 class="c-filter--title">Filters</h2>
-            <button class="o-button-reset c-filter--btn__clear">
+            <button @click='c.HandleClear(event)' class="o-button-reset c-filter--btn__clear">
               Clear all
             </button>
           </div>
@@ -76,6 +77,8 @@
             <div class="o-filter-layout">
               <p class="c-filter--subtitle">Genre</p>
               <svg
+                vg-if='c.GenreFilter == false'
+                @click='c.GenreFilter = !c.GenreFilter'
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -88,34 +91,45 @@
               >
                 <path d="M6 9l6 6 6-6" />
               </svg>
+              <svg 
+                vg-if='c.GenreFilter == true'
+                @click='c.GenreFilter = !c.GenreFilter'
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="#000000" 
+                stroke-width="2" 
+                stroke-linecap="round" 
+                stroke-linejoin="round"
+              >
+                <path d="M18 15l-6-6-6 6"/>
+              </svg>
             </div>
-            <div style="margin-top: 0.5rem">
+            <div vg-if='c.GenreFilter' style="margin-top: 0.5rem">
               <div class="o-checkbox-layout">
-                <input type="radio" name="genre" id="everything" />
-                <label for="everything">Everything</label>
-              </div>
-              <div class="o-checkbox-layout">
-                <input type="radio" name="genre" id="drama" @click='c.filterType = "drama"; c.handleRadio(event)' />
+                <input type="radio" name="genre" id="drama" @click='c.filterType = "Drama"; c.handleRadio(event)' />
                 <label for="drama">Drama</label>
               </div>
               <div class="o-checkbox-layout">
-                <input type="radio" name="genre" id="comedy" @click='c.filterType = "comedy"; c.handleRadio(event)'/>
+                <input type="radio" name="genre" id="comedy" @click='c.filterType = "Comedy"; c.handleRadio(event)'/>
                 <label for="comedy">Comedy</label>
               </div>
               <div class="o-checkbox-layout">
-                <input type="radio" name="genre" id="sciencefiction" @click='c.filterType = "science fiction"; c.handleRadio(event)'/>
+                <input type="radio" name="genre" id="sciencefiction" @click='c.filterType = "Science fiction"; c.handleRadio(event)'/>
                 <label for="sciencefiction">Science Fiction</label>
               </div>
               <div class="o-checkbox-layout">
-                <input type="radio" name="genre" id="fantasy" @click='c.filterType = "fantasy"; c.handleRadio(event)'/>
+                <input type="radio" name="genre" id="fantasy" @click='c.filterType = "Fantasy"; c.handleRadio(event)'/>
                 <label for="fantasy">Fantasy</label>
               </div>
               <div class="o-checkbox-layout">
-                <input type="radio" name="genre" id="action" @click='c.filterType = "action"; c.handleRadio(event)'/>
+                <input type="radio" name="genre" id="action" @click='c.filterType = "Action"; c.handleRadio(event)'/>
                 <label for="action">Action</label>
               </div>
               <div class="o-checkbox-layout">
-                <input type="radio" name="genre" id="thriller" @click='c.filterType = "thriller"; c.handleRadio(event)'/>
+                <input type="radio" name="genre" id="thriller" @click='c.filterType = "Thriller"; c.handleRadio(event)'/>
                 <label for="thriller">Thriller</label>
               </div>
             </div>
@@ -124,6 +138,8 @@
             <div class="o-filter-layout">
               <p class="c-filter--subtitle">Year</p>
               <svg
+                vg-if='c.YearFilter == false'
+                @click='c.YearFilter = !c.YearFilter'
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -135,25 +151,26 @@
                 stroke-linejoin="round"
               >
                 <path d="M6 9l6 6 6-6" />
+              </svg>
+              <svg 
+                vg-if='c.YearFilter == true'
+                @click='c.YearFilter = !c.YearFilter'
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="#000000" 
+                stroke-width="2" 
+                stroke-linecap="round" 
+                stroke-linejoin="round"
+              >
+                <path d="M18 15l-6-6-6 6"/>
               </svg>
             </div>
-          </section>
-          <section class="c-filter-section">
-            <div class="o-filter-layout">
-              <p class="c-filter--subtitle">Trending</p>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#000000"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
+            <div vg-if='c.YearFilter' style="margin: 0.5rem 0">
+              <label class="c-label" for="">Provide a year.</label>
+              <input @change='c.HandleInputYear(event)' class="c-input__year" type="text" name="" id="username" placeholder="2022">
             </div>
           </section>
         </aside>
@@ -172,6 +189,7 @@ import (
     "encoding/json"
     "fmt"
     "context"
+    "strconv"
 )
 
 type Movies struct {
@@ -180,6 +198,9 @@ type Movies struct {
     Items string `vugu:"data"`
     token string
     filterType string `vugu:"data"`
+    GenreFilter bool
+    YearFilter bool
+    Year string
 
     MovieObject struct {
       ID graphql.String `graphql:"id"`
@@ -220,6 +241,20 @@ var q_movies struct {
 	}
 }
 
+var q_moviesclear struct {
+	Movies []struct {
+		ID graphql.String `graphql:"id"`
+		Title graphql.String `graphql:"title"`
+		Genre graphql.String `graphql:"genre"`
+		ImgUrl graphql.String `graphql:"imgUrl"`
+		Description graphql.String `graphql:"description"`
+		ReleaseDate graphql.Int `graphql:"releaseDate"`
+		Length graphql.String `graphql:"length"`
+		Likes graphql.Int `graphql:"likes"`
+		Comments graphql.Int `graphql:"comments"`
+	}
+}
+
 var q_moviebygenre struct {
   Movies []struct {
     ID graphql.String `graphql:"id"`
@@ -234,10 +269,27 @@ var q_moviebygenre struct {
   } `graphql:"movieByGenre(genre: $genre)"`
 }
 
+var q_moviebyyear struct {
+  Movies []struct {
+    ID graphql.String `graphql:"id"`
+    Title graphql.String `graphql:"title"`
+    Genre graphql.String `graphql:"genre"`
+    ImgUrl graphql.String `graphql:"imgUrl"`
+    Description graphql.String `graphql:"description"`
+    ReleaseDate graphql.Int `graphql:"releaseDate"`
+    Length graphql.String `graphql:"length"`
+    Likes graphql.Int `graphql:"likes"`
+    Comments graphql.Int `graphql:"comments"`
+  } `graphql:"movieByYear(releaseDate: $releaseDate)"`
+}
+
 func (c *Movies) Init(ctx vugu.InitCtx) {
     c.token = js.Global().Get("localStorage").Call("getItem", "token").String()
     //log.Println(c.token)
     c.MovieList = nil
+    q_moviebygenre.Movies = nil 
+    q_moviebyyear.Movies = nil 
+    q_moviesclear.Movies = nil
 
     if c.token == "<null>" {
         c.Navigate("/", nil)
@@ -275,6 +327,8 @@ func (c *Movies) handleRadio(event vugu.DOMEvent) {
   ee := event.EventEnv()
   c.MovieList = nil
   q_moviebygenre.Movies = nil 
+  q_moviebyyear.Movies = nil 
+  q_moviesclear.Movies = nil
   log.Println(c.filterType)
   go func() {
     ee.Lock()
@@ -292,6 +346,54 @@ func (c *Movies) handleRadio(event vugu.DOMEvent) {
 
     ee.UnlockRender()
     }()
+}
+
+func (c *Movies) HandleInputYear(event vugu.DOMEvent) {
+  c.Year = event.PropString("target", "value")
+  data, _ := strconv.Atoi(c.Year)
+  ee := event.EventEnv()
+  c.MovieList = nil
+  q_moviebygenre.Movies = nil 
+  q_moviebyyear.Movies = nil 
+  q_moviesclear.Movies = nil
+  go func() {
+    ee.Lock()
+    client := graphql.NewClient("http://localhost:8080/query", nil)
+
+    variables := map[string]interface{}{
+		  "releaseDate":   graphql.Int(data),
+	  } 
+
+    err := client.Query(context.Background(), &q_moviebyyear, variables)
+    if err != nil {
+      fmt.Println(err)
+    }
+    c.MovieList = q_moviebyyear.Movies
+
+    ee.UnlockRender()
+    }()
+}
+
+func (c *Movies) HandleClear(event vugu.DOMEvent) {
+  ee := event.EventEnv()
+  c.MovieList = nil
+  q_moviebygenre.Movies = nil 
+  q_moviebyyear.Movies = nil 
+  q_moviesclear.Movies = nil
+  go func() {
+    client := graphql.NewClient("http://localhost:8080/query", nil)
+
+    err := client.Query(context.Background(), &q_moviesclear, nil)
+    if err != nil {
+      fmt.Println(err, "errrr")
+    }
+
+    ee.Lock()
+
+    c.MovieList = q_moviesclear.Movies
+
+    ee.UnlockRender()
+  }()
 }
 
 </script>

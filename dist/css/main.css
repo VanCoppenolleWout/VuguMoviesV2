@@ -583,6 +583,8 @@ input::placeholder {
   margin-bottom: 1.75rem;
 }
 
+
+
 .c-errormsg {
   position: absolute;
   padding-top: 0.125rem;
@@ -594,6 +596,32 @@ input::placeholder {
   margin-bottom: 0.125rem;
   font-weight: 500;
 }
+
+
+.c-input__year {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 2.5rem;
+  width: 40%;
+  border: solid 1px rgba(0, 0, 0, 0.3);
+  border-radius: var(--global-borderRadius-sm);
+  padding: 0 1rem;
+}
+
+.c-input__year:hover {
+  border-color: var(--global-color-neutral-light);
+  border: var(--global-borderWidth) solid var(--global-input-borderColor);
+}
+
+.c-input__year:active, .c-input__year:focus {
+  border-color: var(--global-color-alpha);
+  box-shadow: 0 0 0 3px var(--global-color-alpha-x-transparent);
+
+  border: var(--global-borderWidth) solid var(--global-input-borderColor);
+  outline: none;
+}
+
 
 .c-input {
   -webkit-appearance: none;
