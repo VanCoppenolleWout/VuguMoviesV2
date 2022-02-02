@@ -988,6 +988,17 @@ type Details struct {
 		Comments	graphql.Int	`graphql:"comments"`
 	}
 
+	ReviewObject	struct {
+		ID		graphql.String
+		Review		graphql.String
+		Date		graphql.String
+		Likes		graphql.Int
+		Comments	graphql.Int
+		User		struct {
+			Username graphql.String
+		}
+	}
+
 	ReviewList	[]struct {
 		ID		graphql.String
 		Review		graphql.String
@@ -1037,6 +1048,19 @@ var q_createreview struct {
 			Username graphql.String
 		}
 	} `graphql:"createReview(input: {review: $review, date: $date, likes: $likes, comments: $comments})"`
+}
+
+var q_reviewupdatelike struct {
+	Reviews []struct {
+		ID		graphql.String	`graphql:"id"`
+		Review		graphql.String
+		Date		graphql.String
+		Likes		graphql.Int
+		Comments	graphql.Int
+		User		struct {
+			Username graphql.String
+		}
+	} `graphql:"updateReviewLike(id: $id)"`
 }
 
 func (c *Details) Init(ctx vugu.InitCtx) {
@@ -1127,6 +1151,27 @@ func (c *Details) HandlePostReview(event vugu.DOMEvent) {
 			}
 		}()
 	}
+}
+
+func (c *Details) HandleLike2(event vugu.DOMEvent) {
+	ee := event.EventEnv()
+	log.Println(c.ReviewObject.ID)
+	go func() {
+		ee.Lock()
+		client := graphql.NewClient("http://localhost:8080/query", nil)
+
+		variables := map[string]interface{}{
+			"id": graphql.ID(fmt.Sprintf("%s", c.ReviewObject.ID)),
+		}
+
+		err := client.Query(context.Background(), &q_reviewupdatelike, variables)
+		if err != nil {
+			fmt.Println(err)
+		}
+		//c.MovieList = q_movieupdatelike.Movies
+
+		ee.UnlockRender()
+	}()
 }
 
 func (c *Details) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
@@ -1524,6 +1569,11 @@ func (c *Details) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 								vgparent.AppendChild(vgn)
 								vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "button", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-button-reset c-button-like--comment"}}}
 								vgparent.AppendChild(vgn)
+								vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
+									EventType:	"click",
+									Func:		func(event vugu.DOMEvent) { c.ReviewObject = item; c.HandleLike2(event) },
+									// TODO: implement capture, etc. mostly need to decide syntax
+								})
 								{
 									vgparent := vgn
 									_ = vgparent

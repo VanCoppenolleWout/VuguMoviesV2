@@ -108,7 +108,7 @@
             <div class="o-layout-commentbtns">
               <button vg-if='!c.showCommentBox' @click='c.HandleCommentbox(event)' class="o-button-reset c-commentbox-cancel" style="font-size: 0.875rem;">Reply</button>
               <button vg-if='c.showCommentBox' @click='c.showCommentBox = !c.showCommentBox' class="o-button-reset c-commentbox-cancel" style="font-size: 0.875rem;">Cancel</button>
-              <button class="o-button-reset c-button-like--comment">
+              <button class="o-button-reset c-button-like--comment" @click='c.ReviewObject = item; c.HandleLike2(event)'>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -186,6 +186,17 @@ type Details struct {
       Comments graphql.Int `graphql:"comments"`
   }
 
+  ReviewObject struct {
+			ID graphql.String
+			Review graphql.String
+			Date graphql.String
+			Likes graphql.Int
+			Comments graphql.Int
+			User struct {
+				Username graphql.String
+			}
+		}
+
   ReviewList []struct {
 			ID graphql.String
 			Review graphql.String
@@ -235,6 +246,19 @@ var q_createreview struct {
       Username graphql.String
     }
   } `graphql:"createReview(input: {review: $review, date: $date, likes: $likes, comments: $comments})"`
+}
+
+var q_reviewupdatelike struct {
+  Reviews []struct {
+    ID graphql.String `graphql:"id"`
+    Review graphql.String
+    Date graphql.String
+    Likes graphql.Int
+    Comments graphql.Int
+    User struct {
+      Username graphql.String
+    }
+  } `graphql:"updateReviewLike(id: $id)"`
 }
 
 func (c *Details) Init(ctx vugu.InitCtx) { 
@@ -325,6 +349,27 @@ func (c *Details) HandlePostReview(event vugu.DOMEvent) {
       }
     }()
   }
+}
+
+func (c *Details) HandleLike2(event vugu.DOMEvent) {
+  ee := event.EventEnv()
+  log.Println(c.ReviewObject.ID)
+  go func() {
+    ee.Lock()
+    client := graphql.NewClient("http://localhost:8080/query", nil)
+
+    variables := map[string]interface{}{
+		  "id":   graphql.ID(fmt.Sprintf("%s", c.ReviewObject.ID)),
+	  } 
+
+    err := client.Query(context.Background(), &q_reviewupdatelike, variables)
+    if err != nil {
+      fmt.Println(err)
+    }
+    //c.MovieList = q_movieupdatelike.Movies
+
+    ee.UnlockRender()
+    }()
 }
 
 </script>
