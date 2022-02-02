@@ -26,6 +26,7 @@
                 <div class="o-layout-likes">
                     <div class="o-layout-likes-indv">
                     <svg
+                        @click='c.MovieObject = item; c.HandleLike(event)'
                         class="c-svg--like"
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
@@ -60,7 +61,7 @@
                         d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
                         ></path>
                     </svg>
-                    <p class="c-movie--comment" vg-content='item.Comments'></p>
+                    <p class="c-movie--comment" >0</p>
                 </div>
               </div>
             </div>
@@ -284,6 +285,20 @@ var q_moviebyyear struct {
   } `graphql:"movieByYear(releaseDate: $releaseDate)"`
 }
 
+var q_movieupdatelike struct {
+  Movies []struct {
+    ID graphql.String `graphql:"id"`
+    Title graphql.String `graphql:"title"`
+    Genre graphql.String `graphql:"genre"`
+    ImgUrl graphql.String `graphql:"imgUrl"`
+    Description graphql.String `graphql:"description"`
+    ReleaseDate graphql.Int `graphql:"releaseDate"`
+    Length graphql.String `graphql:"length"`
+    Likes graphql.Int `graphql:"likes"`
+    Comments graphql.Int `graphql:"comments"`
+  } `graphql:"updateMovieLike(id: $id)"`
+}
+
 func (c *Movies) Init(ctx vugu.InitCtx) {
     c.token = js.Global().Get("localStorage").Call("getItem", "token").String()
     //log.Println(c.token)
@@ -372,6 +387,27 @@ func (c *Movies) HandleInputYear(event vugu.DOMEvent) {
       fmt.Println(err)
     }
     c.MovieList = q_moviebyyear.Movies
+
+    ee.UnlockRender()
+    }()
+}
+
+func (c *Movies) HandleLike(event vugu.DOMEvent) {
+  ee := event.EventEnv()
+  log.Println(c.MovieObject.ID)
+  go func() {
+    ee.Lock()
+    client := graphql.NewClient("http://localhost:8080/query", nil)
+
+    variables := map[string]interface{}{
+		  "id":   graphql.ID(fmt.Sprintf("%s", c.MovieObject.ID)),
+	  } 
+
+    err := client.Query(context.Background(), &q_movieupdatelike, variables)
+    if err != nil {
+      fmt.Println(err)
+    }
+    //c.MovieList = q_movieupdatelike.Movies
 
     ee.UnlockRender()
     }()

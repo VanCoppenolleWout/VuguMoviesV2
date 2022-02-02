@@ -326,7 +326,7 @@ func (c *Header) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 				vgparent.AppendChild(vgn)
 				vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
 					EventType:	"click",
-					Func:		func(event vugu.DOMEvent) { c.Navigate("/", nil) },
+					Func:		func(event vugu.DOMEvent) { c.Navigate("/movies", nil) },
 					// TODO: implement capture, etc. mostly need to decide syntax
 				})
 				{

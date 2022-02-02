@@ -2094,6 +2094,20 @@ var q_moviebyyear struct {
 	} `graphql:"movieByYear(releaseDate: $releaseDate)"`
 }
 
+var q_movieupdatelike struct {
+	Movies []struct {
+		ID		graphql.String	`graphql:"id"`
+		Title		graphql.String	`graphql:"title"`
+		Genre		graphql.String	`graphql:"genre"`
+		ImgUrl		graphql.String	`graphql:"imgUrl"`
+		Description	graphql.String	`graphql:"description"`
+		ReleaseDate	graphql.Int	`graphql:"releaseDate"`
+		Length		graphql.String	`graphql:"length"`
+		Likes		graphql.Int	`graphql:"likes"`
+		Comments	graphql.Int	`graphql:"comments"`
+	} `graphql:"updateMovieLike(id: $id)"`
+}
+
 func (c *Movies) Init(ctx vugu.InitCtx) {
 	c.token = js.Global().Get("localStorage").Call("getItem", "token").String()
 	//log.Println(c.token)
@@ -2182,6 +2196,27 @@ func (c *Movies) HandleInputYear(event vugu.DOMEvent) {
 			fmt.Println(err)
 		}
 		c.MovieList = q_moviebyyear.Movies
+
+		ee.UnlockRender()
+	}()
+}
+
+func (c *Movies) HandleLike(event vugu.DOMEvent) {
+	ee := event.EventEnv()
+	log.Println(c.MovieObject.ID)
+	go func() {
+		ee.Lock()
+		client := graphql.NewClient("http://localhost:8080/query", nil)
+
+		variables := map[string]interface{}{
+			"id": graphql.ID(fmt.Sprintf("%s", c.MovieObject.ID)),
+		}
+
+		err := client.Query(context.Background(), &q_movieupdatelike, variables)
+		if err != nil {
+			fmt.Println(err)
+		}
+		//c.MovieList = q_movieupdatelike.Movies
 
 		ee.UnlockRender()
 	}()
@@ -2389,7 +2424,21 @@ func (c *Movies) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 										vgparent.AppendChild(vgn)
 										vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "svg", Data: "svg", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-svg--like"}, vugu.VGAttribute{Namespace: "", Key: "xmlns", Val: "http://www.w3.org/2000/svg"}, vugu.VGAttribute{Namespace: "", Key: "width", Val: "20"}, vugu.VGAttribute{Namespace: "", Key: "height", Val: "20"}, vugu.VGAttribute{Namespace: "", Key: "viewBox", Val: "0 0 24 24"}, vugu.VGAttribute{Namespace: "", Key: "fill", Val: "none"}, vugu.VGAttribute{Namespace: "", Key: "stroke", Val: "#A3A3A3"}, vugu.VGAttribute{Namespace: "", Key: "stroke-width", Val: "2"}, vugu.VGAttribute{Namespace: "", Key: "stroke-linecap", Val: "round"}, vugu.VGAttribute{Namespace: "", Key: "stroke-linejoin", Val: "round"}}}
 										vgparent.AppendChild(vgn)
-										vgn.SetInnerHTML(vugu.HTML("\n                        \x3Cpath d=\"M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3\"\x3E\x3C/path\x3E\n                    "))
+										vgn.DOMEventHandlerSpecList = append(vgn.DOMEventHandlerSpecList, vugu.DOMEventHandlerSpec{
+											EventType:	"click",
+											Func:		func(event vugu.DOMEvent) { c.MovieObject = item; c.HandleLike(event) },
+											// TODO: implement capture, etc. mostly need to decide syntax
+										})
+										{
+											vgparent := vgn
+											_ = vgparent
+											vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                        "}
+											vgparent.AppendChild(vgn)
+											vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "svg", Data: "path", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "d", Val: "M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"}}}
+											vgparent.AppendChild(vgn)
+											vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
+											vgparent.AppendChild(vgn)
+										}
 										vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
 										vgparent.AppendChild(vgn)
 										vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "p", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie--like"}}}
@@ -2402,22 +2451,7 @@ func (c *Movies) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 									vgparent.AppendChild(vgn)
 									vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "o-layout-likes-indv"}}}
 									vgparent.AppendChild(vgn)
-									{
-										vgparent := vgn
-										_ = vgparent
-										vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
-										vgparent.AppendChild(vgn)
-										vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "svg", Data: "svg", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-svg--comment"}, vugu.VGAttribute{Namespace: "", Key: "xmlns", Val: "http://www.w3.org/2000/svg"}, vugu.VGAttribute{Namespace: "", Key: "width", Val: "20"}, vugu.VGAttribute{Namespace: "", Key: "height", Val: "20"}, vugu.VGAttribute{Namespace: "", Key: "viewBox", Val: "0 0 24 24"}, vugu.VGAttribute{Namespace: "", Key: "fill", Val: "none"}, vugu.VGAttribute{Namespace: "", Key: "stroke", Val: "#A3A3A3"}, vugu.VGAttribute{Namespace: "", Key: "stroke-width", Val: "2"}, vugu.VGAttribute{Namespace: "", Key: "stroke-linecap", Val: "round"}, vugu.VGAttribute{Namespace: "", Key: "stroke-linejoin", Val: "round"}}}
-										vgparent.AppendChild(vgn)
-										vgn.SetInnerHTML(vugu.HTML("\n                        \x3Cpath d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"\x3E\x3C/path\x3E\n                    "))
-										vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                    "}
-										vgparent.AppendChild(vgn)
-										vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "p", Attr: []vugu.VGAttribute{vugu.VGAttribute{Namespace: "", Key: "class", Val: "c-movie--comment"}}}
-										vgparent.AppendChild(vgn)
-										vgn.SetInnerHTML(item.Comments)
-										vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n                "}
-										vgparent.AppendChild(vgn)
-									}
+									vgn.SetInnerHTML(vugu.HTML("\n                    \x3Csvg class=\"c-svg--comment\" xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#A3A3A3\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\x3E\n                        \x3Cpath d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"\x3E\x3C/path\x3E\n                    \x3C/svg\x3E\n                    \x3Cp class=\"c-movie--comment\"\x3E0\x3C/p\x3E\n                "))
 									vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n              "}
 									vgparent.AppendChild(vgn)
 								}
